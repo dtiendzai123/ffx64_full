@@ -26,13 +26,7 @@ try {
 
     // Mảng các key mặc định true
     const keysTrue = [
-        "com.cpss_allow.wz-settingaccpt-prefer.plist",
-        "com.acp_config.fullaccesspointer-perfer.dat",
-        "com.cpss_high_config.mh.device-prefer.list",
-        "com.ed-ffbasex64-prefer.data",
-        "com.cpss_high_config.sentov-ffxbase64.dat",
-        "com.cpss_allow_config-system-touchdelay-0.ips",
-        "com.dtps_ppi_config.lockuni-perfer-ffx64.string",
+     
         "com.ss-ffx64.aps",
         "com.gamsrollm.list",
         "com.analytics-sys.ips",
