@@ -114,7 +114,7 @@ json["com.libsystem_pthread.dylib -Pre9M76X3pyLNQCUO6.select.on_allow.file.list"
         "com.regcl-ffbasex32",
         "com.khfile-ffbasex64",
         "freebase.com.ffx64base",
-        "com.setup-lockbase.dat"
+        "com.setup-lockbase.dat",
      "com.siop.ips"
         ];
 
