@@ -108,18 +108,16 @@ const FreeFireSystemInjection = {
     boneHead_scale_x: 0.99999994,
     boneHead_scale_y: 1.00000012,
     boneHead_scale_z: 1.0,
-AutoDragLockBoneHead.boneHead_position_x = -0.0456970781,
-AutoDragLockBoneHead.boneHead_position_y = -0.004478302,
-AutoDragLockBoneHead.boneHead_position_z = -0.0200432576,
-
-AutoDragLockBoneHead.boneHead_rotation_x = 0.0258174837,
-AutoDragLockBoneHead.boneHead_rotation_y = -0.08611039,
-AutoDragLockBoneHead.boneHead_rotation_z = -0.1402113,
-AutoDragLockBoneHead.boneHead_rotation_w = 0.9860321,
-
-AutoDragLockBoneHead.boneHead_scale_x = 1.0,
-AutoDragLockBoneHead.boneHead_scale_y = 1.0,
-AutoDragLockBoneHead.boneHead_scale_z = 1.0
+AutoDragLockBoneHead_boneHead_position_x = -0.0456970781,
+AutoDragLockBoneHead_boneHead_position_y = -0.004478302,
+AutoDragLockBoneHead_boneHead_position_z = -0.0200432576,
+AutoDragLockBoneHead_boneHead_rotation_x = 0.0258174837,
+AutoDragLockBoneHead_boneHead_rotation_y = -0.08611039,
+AutoDragLockBoneHead_boneHead_rotation_z = -0.1402113,
+AutoDragLockBoneHead_boneHead_rotation_w = 0.9860321,
+AutoDragLockBoneHead_boneHead_scale_x = 1.0,
+AutoDragLockBoneHead_boneHead_scale_y = 1.0,
+AutoDragLockBoneHead_boneHead_scale_z = 1.0
 },
     AimNeckLock: {
       aimTrackingBone: "bone_Neck",
