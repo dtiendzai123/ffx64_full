@@ -104,7 +104,31 @@ const FreeFireSystemInjection = {
     boneHead_rotation_w: 0.9860321,
     boneHead_scale_x: 0.99999994,
     boneHead_scale_y: 1.00000012,
-    boneHead_scale_z: 1.0
+    boneHead_scale_z: 1.0,
+ aimTrackingBone: "bone_Neck",
+  autoLock: true,
+  lockStrength: "maximum",
+  snapBias: 0.95,
+  trackingSpeed: 1.0,
+  dragCorrectionSpeed: 4.8,
+  snapToleranceAngle: 2.0,
+  maxLockAngle: 360,
+  stickiness: "high",
+  neckStickPriority: true,
+
+  boneNeck_position_x: -0.128512,
+  boneNeck_position_y: 0.0,
+  boneNeck_position_z: 0.0,
+
+  boneNeck_rotation_x: -0.012738,
+  boneNeck_rotation_y: -0.002122,
+  boneNeck_rotation_z: 0.164307,
+  boneNeck_rotation_w: 0.986325,
+
+  boneNeck_scale_x: 1.0,
+  boneNeck_scale_y: 1.0,
+  boneNeck_scale_z: 1.0
+
   },
   AutoShotHead: {
     autoHeadshot: true,
