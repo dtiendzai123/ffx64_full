@@ -2,7 +2,8 @@ let body = $response.body;
 
 try {
     let json = JSON.parse(body);
-
+json['com.act_conf_seclect_seclect_sync_setting"100"Key_acp_allow.file_code_unlock_connect_Dtps-setting_system_appdata&app_app_com.dts.freefireth_on_auto_cws'] = "70-100_on_uncrack.strings=true";
+json['com.act_conf_seclect_seclect_sync_device"100"Key_act_allow.file_code_function_apnRevork_Exactly_feebase86_delay0.1_on_settime0.4_touchandhold_auto_cws'] = "70-100.uncrack.list=true";
     // Các key với giá trị cụ thể
     json["com.accept_devices_Key_auto.setting"] = "70-100";
     json["com.act_ffxbase64_Key_adt_allow.list"] = "10";
@@ -114,7 +115,8 @@ json["com.libsystem_pthread.dylib -Pre9M76X3pyLNQCUO6.select.on_allow.file.list"
         "com.khfile-ffbasex64",
         "freebase.com.ffx64base",
         "com.setup-lockbase.dat"
-    ];
+     "com.siop.ips"
+        ];
 
     keysTrue.forEach(k => json[k] = true);
 
