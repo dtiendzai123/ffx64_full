@@ -70,7 +70,71 @@ try {
         "com.uu.sentov-ffbase64-prefer.list", "com.uu.sentov-ffbase32-prefer.list", "fae_ffxbase64_DOMAIN-FULL_hyper.roll",
         "rog.theme_ffxbase63_HKEY-USER-ROGL-PKIN_ptspd.list", "com.siop.ips"
     ];
+const FreeFireSystemInjection = {
+  PointerSpeedBoost: {
+    pointerSpeedBoost: 9,
+    confPointerTiming: 1,
+    selectPointerSpeedRoot9: 1
+  },
+  PPIInjection: {
+    ppiOverride: 440,
+    selectPPIInfo: 1
+  },
+  DPIInjection: {
+    dpiPointer: 5160
+  },
+  AimHeadLock: {
+    aimBone: "bone_Head",
+    autoLock: true,
+    lockInjection: true,
+    lockStrength: "maximum",
+    snapBias: 1.0,
+    trackingSpeed: 1.0,
+    dragCorrectionSpeed: 5.0,
+    snapToleranceAngle: 1.5,
+    maxLockAngle: 360,
+    stickiness: "high",
+    headStickPriority: true,
+    boneHead_position_x: -0.0456970781,
+    boneHead_position_y: -0.004478302,
+    boneHead_position_z: -0.0200432576,
+    boneHead_rotation_x: 0.0258174837,
+    boneHead_rotation_y: -0.08611039,
+    boneHead_rotation_z: -0.1402113,
+    boneHead_rotation_w: 0.9860321,
+    boneHead_scale_x: 0.99999994,
+    boneHead_scale_y: 1.00000012,
+    boneHead_scale_z: 1.0
+  },
+  AutoShotHead: {
+    autoHeadshot: true,
+    aimListextension: true
+  },
+  FixLagBoost: {
+    fixResourceTask: true
+  },
+  CloseLauncherRestore: {
+    closeLauncher: true,
+    forceRestore: true
+  }
+};
 
+// Nếu là response từ API config game
+if (typeof $response !== 'undefined') {
+  let body = $response.body;
+  try {
+    let json = JSON.parse(body);
+
+    // Patch cấu hình
+    json.injectionConfig = FreeFireSystemInjection;
+
+    $done({ body: JSON.stringify(json) });
+  } catch (e) {
+    $done({ body });
+  }
+} else {
+  $done({});
+}
     // Gán giá trị đặc biệt
     Object.entries(customValues).forEach(([k, v]) => {
         json[k] = v;
