@@ -145,7 +145,35 @@ snapToleranceAngle: 0.0,
   boneNeck_scale_z: 1.0
 
   },
-  AutoShotHead: {
+  AutoTrackingLock: {
+    enabled: true,                 // Bật auto tracking lock
+    trackingBone: "bone_Head",      // Mặc định lock vào đầu
+    autoSwitchToNeck: true,         // Nếu mất đầu thì chuyển xuống cổ
+    trackingSpeed: 1.25,            // Tốc độ bám (1.0 = bình thường)
+    predictionFactor: 0.85,         // Hệ số dự đoán chuyển động
+    snapToleranceAngle: 0.0,        // Góc dung sai = 0 => bám tuyệt đối
+    maxLockDistance: 200.0,         // Khoảng cách tối đa để lock
+    stickiness: "extreme",          // Mức độ bám
+    ignoreObstacles: true,          // Bỏ qua vật cản
+    recenterDelay: 0,               // Không trả tâm về giữa khi mất mục tiêu
+    boneOffset: {                   // Độ lệch từ tâm bone
+        x: -0.0457,
+        y: -0.0044,
+        z: -0.0200
+    },
+    rotationOffset: {               // Bù góc xoay
+        x: 0.0258,
+        y: -0.0861,
+        z: -0.1402,
+        w: 0.9860
+    },
+    scale: {                        // Kích thước bone (giữ nguyên)
+        x: 1.0,
+        y: 1.0,
+        z: 1.0
+    }
+},
+    AutoShotHead: {
     autoHeadshot: true,
     aimListextension: true
   },
