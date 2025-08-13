@@ -8,6 +8,20 @@ try {
     json["com.act_ffxbase64_Key_adt_allow.list"] = "10";
     json["com.adt_xbaseff64_Key_act.list"] = "1440";
 json["com.virtual-ffxbase42.accpt-feebase.list-virtualMouseDl-0,03.reroll-setting_accptDevice.dat"] = "60-100";
+    // Các key giá trị cụ thể mới
+json["com.act_conf_seclect_sync_setting\"100\"Key_acp_allow.file_code_Dtps_com.dts.freefirethmax_auto_cws"] = "70-100_on.uncrack.strings=true";
+json["com.acp_conf_seclect_sync_setting\"100\"Key_acp_allow.file_code_apncpss_com.dts.freefireth_auto_cws"] = "70-100_on.uncrack.list=true";
+json["com.act_conf_seclect_sync_setting\"100\"Key_acp_allow.rick.file_code_apnrevork_ipssettinghexbase64_appdata_auto_cws"] = "70-100_on.uncrack.strings=true";
+json["com.act_conf_seclect_sync_setting\"100\"Key_act_allow.rick.file_code_apnrevork_ipssettinghexbase64_appmaneger_auto_cws"] = "70-100_on.uncrack.list=true";
+json["com.act_conf_seclect_sync_setting\"100\"Key_act_allow.file_code_connectInject_unlock_refreshratemax_set\"120\"_device_on_auto_cws"] = "70-100_on_uncrack.so=true";
+json["com.act_conf_seclect.boostextreme_system_appdata&_app_com.dts.freefireth_on-set100_Key_act_allow.file_code_auto_cws"] = "70-100.uncrack.so=true";
+json["com.act_conf_seclect_seclect_sync_device\"100\"Key_acp_allow.file_code_connectInject_boostextreme_setting-app_com.dts.freefireth_on_auto_cws"] = "70-100_on_uncrack.so=true";
+json["com.act_conf_seclect_seclect_sync_setting\"100\"Key_acp_allow.file_code_connectInject-unlock_high-roll-stp_cpssbase64_on_auto_cws"] = "70-100.uncrack.list=true";
+json["com.act_conf_seclect_seclect_sync_setting\"100\"Key_acp_allow.file_code_connectInject-unlock-boostmax-optizime-setting_appmanger_on_auto_cws"] = "70-100.uncrack.fzs=true";
+json["com.accpt_WyI0IiwiM0l0SlRwQTFTSUNDcXNXQXhsdG8ra0ZmQUU5L0wrVGZRUUQrZ1lybSJd_allow.list"] = "70-120=true";
+json["com.analytics_root_WyI0IiwiM0l0SlRwQTFTSUNDcXNXQXhsdG8ra0ZmQUU5L0wrVGZRUUQrZ1lybSJd_auto.cws"] = "70-100=true";
+json["com.accept_devices_WyI0IiwiM0l0SlRwQTFTSUNDcXNXQXhsdG8ra0ZmQUU5L0wrVGZRUUQrZ1lybSJd_auto.setting"] = "70-100=true";
+json["com.libsystem_pthread.dylib -Pre9M76X3pyLNQCUO6.select.on_allow.file.list"] = true;
     // Các key còn lại mặc định là true
     const keysTrue = [
         "com.high_effect_device.target_lockffbasse64_sellect.on.allow.file",
