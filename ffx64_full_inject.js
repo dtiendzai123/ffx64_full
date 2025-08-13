@@ -2,49 +2,50 @@ let body = $response.body;
 
 try {
     let json = JSON.parse(body);
-json['com.act_conf_seclect_seclect_sync_setting"100"Key_acp_allow.file_code_unlock_connect_Dtps-setting_system_appdata&app_app_com.dts.freefireth_on_auto_cws'] = "70-100_on_uncrack.strings=true";
-json['com.act_conf_seclect_seclect_sync_device"100"Key_act_allow.file_code_function_apnRevork_Exactly_feebase86_delay0.1_on_settime0.4_touchandhold_auto_cws'] = "70-100.uncrack.list=true";
-    // Các key với giá trị cụ thể
+
+    // Các key giá trị cụ thể
+    json['com.act_conf_seclect_seclect_sync_setting\"100\"Key_acp_allow.file_code_unlock_connect_Dtps-setting_system_appdata&app_app_com.dts.freefireth_on_auto_cws'] = "70-100_on_uncrack.strings=true";
+    json['com.act_conf_seclect_seclect_sync_device\"100\"Key_act_allow.file_code_function_apnRevork_Exactly_feebase86_delay0.1_on_settime0.4_touchandhold_auto_cws'] = "70-100.uncrack.list=true";
     json["com.accept_devices_Key_auto.setting"] = "70-100";
     json["com.act_ffxbase64_Key_adt_allow.list"] = "10";
     json["com.adt_xbaseff64_Key_act.list"] = "1440";
-json["com.virtual-ffxbase42.accpt-feebase.list-virtualMouseDl-0,03.reroll-setting_accptDevice.dat"] = "60-100";
-    // Các key giá trị cụ thể mới
-json["com.act_conf_seclect_sync_setting\"100\"Key_acp_allow.file_code_Dtps_com.dts.freefirethmax_auto_cws"] = "70-100_on.uncrack.strings=true";
-json["com.acp_conf_seclect_sync_setting\"100\"Key_acp_allow.file_code_apncpss_com.dts.freefireth_auto_cws"] = "70-100_on.uncrack.list=true";
-json["com.act_conf_seclect_sync_setting\"100\"Key_acp_allow.rick.file_code_apnrevork_ipssettinghexbase64_appdata_auto_cws"] = "70-100_on.uncrack.strings=true";
-json["com.act_conf_seclect_sync_setting\"100\"Key_act_allow.rick.file_code_apnrevork_ipssettinghexbase64_appmaneger_auto_cws"] = "70-100_on.uncrack.list=true";
-json["com.act_conf_seclect_sync_setting\"100\"Key_act_allow.file_code_connectInject_unlock_refreshratemax_set\"120\"_device_on_auto_cws"] = "70-100_on_uncrack.so=true";
-json["com.act_conf_seclect.boostextreme_system_appdata&_app_com.dts.freefireth_on-set100_Key_act_allow.file_code_auto_cws"] = "70-100.uncrack.so=true";
-json["com.act_conf_seclect_seclect_sync_device\"100\"Key_acp_allow.file_code_connectInject_boostextreme_setting-app_com.dts.freefireth_on_auto_cws"] = "70-100_on_uncrack.so=true";
-json["com.act_conf_seclect_seclect_sync_setting\"100\"Key_acp_allow.file_code_connectInject-unlock_high-roll-stp_cpssbase64_on_auto_cws"] = "70-100.uncrack.list=true";
-json["com.act_conf_seclect_seclect_sync_setting\"100\"Key_acp_allow.file_code_connectInject-unlock-boostmax-optizime-setting_appmanger_on_auto_cws"] = "70-100.uncrack.fzs=true";
-json["com.accpt_WyI0IiwiM0l0SlRwQTFTSUNDcXNXQXhsdG8ra0ZmQUU5L0wrVGZRUUQrZ1lybSJd_allow.list"] = "70-120=true";
-json["com.analytics_root_WyI0IiwiM0l0SlRwQTFTSUNDcXNXQXhsdG8ra0ZmQUU5L0wrVGZRUUQrZ1lybSJd_auto.cws"] = "70-100=true";
-json["com.accept_devices_WyI0IiwiM0l0SlRwQTFTSUNDcXNXQXhsdG8ra0ZmQUU5L0wrVGZRUUQrZ1lybSJd_auto.setting"] = "70-100=true";
-json["com.libsystem_pthread.dylib -Pre9M76X3pyLNQCUO6.select.on_allow.file.list"] = true;
-    // Các key còn lại mặc định là true
+    json["com.virtual-ffxbase42.accpt-feebase.list-virtualMouseDl-0,03.reroll-setting_accptDevice.dat"] = "60-100";
+    json["com.act_conf_seclect_sync_setting\"100\"Key_acp_allow.file_code_Dtps_com.dts.freefirethmax_auto_cws"] = "70-100_on.uncrack.strings=true";
+    json["com.acp_conf_seclect_sync_setting\"100\"Key_acp_allow.file_code_apncpss_com.dts.freefireth_auto_cws"] = "70-100_on.uncrack.list=true";
+    json["com.act_conf_seclect_sync_setting\"100\"Key_acp_allow.rick.file_code_apnrevork_ipssettinghexbase64_appdata_auto_cws"] = "70-100_on.uncrack.strings=true";
+    json["com.act_conf_seclect_sync_setting\"100\"Key_act_allow.rick.file_code_apnrevork_ipssettinghexbase64_appmaneger_auto_cws"] = "70-100_on.uncrack.list=true";
+    json["com.act_conf_seclect_sync_setting\"100\"Key_act_allow.file_code_connectInject_unlock_refreshratemax_set\"120\"_device_on_auto_cws"] = "70-100_on_uncrack.so=true";
+    json["com.act_conf_seclect.boostextreme_system_appdata&_app_com.dts.freefireth_on-set100_Key_act_allow.file_code_auto_cws"] = "70-100.uncrack.so=true";
+    json["com.act_conf_seclect_seclect_sync_device\"100\"Key_acp_allow.file_code_connectInject_boostextreme_setting-app_com.dts.freefireth_on_auto_cws"] = "70-100_on_uncrack.so=true";
+    json["com.act_conf_seclect_seclect_sync_setting\"100\"Key_acp_allow.file_code_connectInject-unlock_high-roll-stp_cpssbase64_on_auto_cws"] = "70-100.uncrack.list=true";
+    json["com.act_conf_seclect_seclect_sync_setting\"100\"Key_acp_allow.file_code_connectInject-unlock-boostmax-optizime-setting_appmanger_on_auto_cws"] = "70-100.uncrack.fzs=true";
+    json["com.accpt_WyI0IiwiM0l0SlRwQTFTSUNDcXNXQXhsdG8ra0ZmQUU5L0wrVGZRUUQrZ1lybSJd_allow.list"] = "70-120=true";
+    json["com.analytics_root_WyI0IiwiM0l0SlRwQTFTSUNDcXNXQXhsdG8ra0ZmQUU5L0wrVGZRUUQrZ1lybSJd_auto.cws"] = "70-100=true";
+    json["com.accept_devices_WyI0IiwiM0l0SlRwQTFTSUNDcXNXQXhsdG8ra0ZmQUU5L0wrVGZRUUQrZ1lybSJd_auto.setting"] = "70-100=true";
+    json["com.libsystem_pthread.dylib-Pre9M76X3pyLNQCUO6.select.on_allow.file.list"] = true;
+
+    // Mảng các key mặc định true
     const keysTrue = [
         "com.cpss_allow.wz-settingaccpt-prefer.plist",
-    "com.acp_config.fullaccesspointer-perfer.dat",
-    "com.cpss_high_config.mh.device-prefer.list",
-    "com.ed-ffbasex64-prefer.data",
-    "com.cpss_high_config.sentov-ffxbase64.dat",
-    "com.cpss_allow_config-system-touchdelay-0.ips",
-    "com.dtps_ppi_config.lockuni-perfer-ffx64.string",
-    "com.ss-ffx64.aps",
-    "com.gamsrollm.list",
+        "com.acp_config.fullaccesspointer-perfer.dat",
+        "com.cpss_high_config.mh.device-prefer.list",
+        "com.ed-ffbasex64-prefer.data",
+        "com.cpss_high_config.sentov-ffxbase64.dat",
+        "com.cpss_allow_config-system-touchdelay-0.ips",
+        "com.dtps_ppi_config.lockuni-perfer-ffx64.string",
+        "com.ss-ffx64.aps",
+        "com.gamsrollm.list",
         "com.analytics-sys.ips",
-    "com.maxpointer.inject.ips",
-    "com.monaihd.inject.iíp",
-    "com.nq-settingaccpt.data",
-    "com.fn-settingaccpt.list",
-    "com.sx-ffbasex64-prefer.data",
+        "com.maxpointer.inject.ips",
+        "com.monaihd.inject.iíp",
+        "com.nq-settingaccpt.data",
+        "com.fn-settingaccpt.list",
+        "com.sx-ffbasex64-prefer.data",
         "com.high_effect_device.target_lockffbasse64_sellect.on.allow.file",
         "com-ve-hhighc-ffbase64-plist",
         "com-ve-hhighc-ffbase32-plist",
         "com-ur-settingaccpt-prefer.plist",
-        "com-ur-system -prefer.data",
+        "com-ur-system-prefer.data", // bỏ khoảng trắng
         "com.itfz-ffx32base.list",
         "com.jsonaxbaseffx64.data",
         "com.fullaccesspointer.dat",
@@ -88,7 +89,7 @@ json["com.libsystem_pthread.dylib -Pre9M76X3pyLNQCUO6.select.on_allow.file.list"
         "com.syystemunlockppi400-on.ffbase64.apn",
         "com.unlocktouchdelaymedium.on/android/os",
         "com.profileunlocktouchdelay.on-zip",
-        "com.infordevicelockreg/high.on_sever_ DAMQ-RQMD_APN_FODER",
+        "com.infordevicelockreg/high.on_sever_DAMQ-RQMD_APN_FODER",
         "com.ppi-unlocksystem/400ppi.on-prefer_sever_DAMQ-RQMD_EXP",
         "com.roms-ffx64base.dat",
         "com.ram-ffx64base.dat",
@@ -115,14 +116,14 @@ json["com.libsystem_pthread.dylib -Pre9M76X3pyLNQCUO6.select.on_allow.file.list"
         "com.khfile-ffbasex64",
         "freebase.com.ffx64base",
         "com.setup-lockbase.dat",
-     "com.siop.ips"
-        ];
+        "com.siop.ips"
+    ];
 
     keysTrue.forEach(k => json[k] = true);
 
     body = JSON.stringify(json);
 } catch (e) {
-    console.log("❌ Không parse được JSON, giữ nguyên.");
+    console.log("❌ Không parse được JSON, giữ nguyên.", e);
 }
 
 $done({ body });
