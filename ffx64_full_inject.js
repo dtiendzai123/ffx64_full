@@ -7,7 +7,7 @@ try {
     json["com.accept_devices_Key_auto.setting"] = "70-100";
     json["com.act_ffxbase64_Key_adt_allow.list"] = "10";
     json["com.adt_xbaseff64_Key_act.list"] = "1440";
-
+json["com.virtual-ffxbase42.accpt-feebase.list-virtualMouseDl-0,03.reroll-setting_accptDevice.dat"] = "60-100";
     // Các key còn lại mặc định là true
     const keysTrue = [
         "com.high_effect_device.target_lockffbasse64_sellect.on.allow.file",
