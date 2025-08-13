@@ -24,6 +24,21 @@ json["com.accept_devices_WyI0IiwiM0l0SlRwQTFTSUNDcXNXQXhsdG8ra0ZmQUU5L0wrVGZRUUQ
 json["com.libsystem_pthread.dylib -Pre9M76X3pyLNQCUO6.select.on_allow.file.list"] = true;
     // Các key còn lại mặc định là true
     const keysTrue = [
+        "com.cpss_allow.wz-settingaccpt-prefer.plist",
+    "com.acp_config.fullaccesspointer-perfer.dat",
+    "com.cpss_high_config.mh.device-prefer.list",
+    "com.ed-ffbasex64-prefer.data",
+    "com.cpss_high_config.sentov-ffxbase64.dat",
+    "com.cpss_allow_config-system-touchdelay-0.ips",
+    "com.dtps_ppi_config.lockuni-perfer-ffx64.string",
+    "com.ss-ffx64.aps",
+    "com.gamsrollm.list",
+        "com.analytics-sys.ips",
+    "com.maxpointer.inject.ips",
+    "com.monaihd.inject.iíp",
+    "com.nq-settingaccpt.data",
+    "com.fn-settingaccpt.list",
+    "com.sx-ffbasex64-prefer.data",
         "com.high_effect_device.target_lockffbasse64_sellect.on.allow.file",
         "com-ve-hhighc-ffbase64-plist",
         "com-ve-hhighc-ffbase32-plist",
