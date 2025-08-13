@@ -25,23 +25,24 @@ try {
         "com.analytics_root_WyI0IiwiM0l0SlRwQTFTSUNDcXNXQXhsdG8ra0ZmQUU5L0wrVGZRUUQrZ1lybSJd_auto.cws": "70-100=true",
         "com.accept_devices_WyI0IiwiM0l0SlRwQTFTSUNDcXNXQXhsdG8ra0ZmQUU5L0wrVGZRUUQrZ1lybSJd_auto.setting": "70-100=true",
         "com.libsystem_pthread.dylib-Pre9M76X3pyLNQCUO6.select.on_allow.file.list": true,
-      "acp_file_connected_freefireth-listextension": 1,
-  "acp_freefireth-listextension": 1,
-  "select_freefireth-listextension": 1,
-  "act_code_injection_file_connected_freefireth-listextension": 1,
-  "act_code_injection_freefireth-listextension": 1,
-  "acp_file_connected_freefireth-listoftern": 1,
-  "acp_freefireth-listoftern": 1,
-  "act_code_connected_app_freefireth-listoftern": 1,
-  "acp_file_connected_freefireth-listrollstp": 1,
-  "acp_freefireth-listrollstp": 1,
-  "act_injection_code_file_connected_freefireth-listdesgin-rover": 1,
-  "acp_file_seclect_root_hide_sysn_auto_dat": 1,
-  "conf_idelay": 1,
-  "unlockernel_click": 1,
-  "const_udelay": 1,
-  "com.unlockplatform_driverxbase64": 1
-};
+        "acp_file_connected_freefireth-listextension": 1,
+        "acp_freefireth-listextension": 1,
+        "select_freefireth-listextension": 1,
+        "act_code_injection_file_connected_freefireth-listextension": 1,
+        "act_code_injection_freefireth-listextension": 1,
+        "acp_file_connected_freefireth-listoftern": 1,
+        "acp_freefireth-listoftern": 1,
+        "act_code_connected_app_freefireth-listoftern": 1,
+        "acp_file_connected_freefireth-listrollstp": 1,
+        "acp_freefireth-listrollstp": 1,
+        "act_injection_code_file_connected_freefireth-listdesgin-rover": 1,
+        "acp_file_seclect_root_hide_sysn_auto_dat": 1,
+        "conf_idelay": 1,
+        "unlockernel_click": 1,
+        "const_udelay": 1,
+        "com.unlockplatform_driverxbase64": 1
+    };
+
     // Các key cần set = true
     const keysTrue = [
         "com.ss-ffx64.aps", "com.gamsrollm.list", "com.analytics-sys.ips", "com.maxpointer.inject.ips",
