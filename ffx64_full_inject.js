@@ -145,7 +145,35 @@ snapToleranceAngle: 0.0,
   boneNeck_scale_z: 1.0
 
   },
-  AutoTrackingLock: {
+ AutoAimHeadOnFire: {
+    enabled: true,                 // Bật auto aim khi bắn
+    aimBone: "bone_Head",           // Lock vào đầu
+    autoLockOnFire: true,           // Khi nhấn bắn thì lock
+    trackingSpeed: 1.5,             // Tốc độ bám
+    predictionFactor: 0.9,          // Hệ số dự đoán
+    snapToleranceAngle: 0.0,        // 0 = bám tuyệt đối
+    stickiness: "extreme",          // Độ bám cao nhất
+    headLockPriority: true,         // Ưu tiên đầu
+    disableBodyRecenter: true,      // Không trả lại thân
+    fireHoldLock: true,             // Giữ lock khi giữ cò
+    boneOffset: {                   // Bù vị trí đầu
+        x: -0.0457,
+        y: -0.0044,
+        z: -0.0200
+    },
+    rotationOffset: {               // Bù góc xoay
+        x: 0.0258,
+        y: -0.0861,
+        z: -0.1402,
+        w: 0.9860
+    },
+    scale: {                        // Kích thước bone
+        x: 1.0,
+        y: 1.0,
+        z: 1.0
+    }
+},
+    AutoTrackingLock: {
     enabled: true,                 // Bật auto tracking lock
     trackingBone: "bone_Head",      // Mặc định lock vào đầu
     autoSwitchToNeck: true,         // Nếu mất đầu thì chuyển xuống cổ
