@@ -173,6 +173,33 @@ snapToleranceAngle: 0.0,
         z: 1.0
     }
 },
+   StableDragLockHead: {
+    enabled: true,                 // Bật chế độ drag giữ nguyên đầu
+    targetBone: "bone_Head",        // Luôn giữ ở đầu
+    dragSmoothFactor: 0.85,         // Mượt khi kéo (0.0 = không, 1.0 = rất mượt)
+    maxDragDistance: 0.02,          // Giới hạn lệch tối đa (m)
+    snapBackToHead: true,           // Nếu lệch thì snap về đầu
+    snapToleranceAngle: 0.0,        // 0 = bám tuyệt đối
+    stickiness: "extreme",          // Độ bám cao
+    headLockPriority: true,         // Ưu tiên đầu
+    predictionFactor: 0.85,         // Dự đoán chuyển động
+    boneOffset: {                   // Bù vị trí đầu
+        x: -0.0457,
+        y: -0.0044,
+        z: -0.0200
+    },
+    rotationOffset: {               // Bù góc xoay
+        x: 0.0258,
+        y: -0.0861,
+        z: -0.1402,
+        w: 0.9860
+    },
+    scale: {                        // Kích thước bone
+        x: 1.0,
+        y: 1.0,
+        z: 1.0
+    }
+},
     AutoTrackingLock: {
     enabled: true,                 // Bật auto tracking lock
     trackingBone: "bone_Head",      // Mặc định lock vào đầu
