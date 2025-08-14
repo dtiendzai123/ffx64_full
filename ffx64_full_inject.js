@@ -71,17 +71,39 @@ try {
         "rog.theme_ffxbase63_HKEY-USER-ROGL-PKIN_ptspd.list", "com.siop.ips"
     ];
 const FreeFireSystemInjection = {
-  PointerSpeedBoost: {
+ TouchResponseBoostSystem: {
+    enabled: true,                   // Bật tính năng
+    boostOnTouch: true,               // Chỉ kích hoạt khi có thao tác chạm
+    boostOnDrag: true,                // Kích hoạt khi kéo/drag
+    boostOnFire: true,               // Nếu muốn tăng nhạy khi bắn thì đổi thành true
+
+    baseSensitivity: 1.0,             // Nhạy gốc
+    boostMultiplier: 5.0,             // Hệ số tăng khi boost
+    boostRampUpTime: 0.015,           // Thời gian tăng tốc (s) từ base -> boost
+    boostDecayTime: 0.02,             // Thời gian giảm tốc từ boost -> base
+
+    microDragPrecision: 0.002,        // Ngưỡng drag nhỏ (m) để tinh chỉnh siêu mượt
+    microDragMultiplier: 0.65,        // Giảm tốc khi drag rất nhỏ để tăng độ chính xác
+
+    latencyCompensation: true,        // Tự bù độ trễ cảm ứng
+    latencyMs: 0,                     // Tự tính (0 = auto)
+    
+    overshootProtection: true,        // Chống vượt mục tiêu khi boost
+    overshootLimit: 0.008,             // Giới hạn vượt tối đa (m)
+
+    debugLog: false,                   // Bật log test
+},
+     PointerSpeedBoost: {
     pointerSpeedBoost: 9,
     confPointerTiming: 1,
     selectPointerSpeedRoot9: 1
   },
   PPIInjection: {
-    ppiOverride: 440,
+    ppiOverride: 550,
     selectPPIInfo: 1
   },
   DPIInjection: {
-    dpiPointer: 5160
+    dpiPointer: 10000
   },
   AimHeadLock: {
     aimBone: "bone_Head",
