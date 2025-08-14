@@ -119,6 +119,37 @@ const FreeFireSystemInjection = {
     AutoDragLockBoneHead_boneHead_scale_y: 1.0,
     AutoDragLockBoneHead_boneHead_scale_z: 1.0
 },
+    AutoAimLockHeadOnFire_StableDrag: {
+    enabled: true,                   // Bật tính năng
+    aimBone: "bone_Head",             // Luôn lock vào đầu
+    autoLockOnFire: true,             // Nhấn bắn là lock ngay
+    holdLockWhileFiring: true,        // Giữ lock khi giữ cò
+    dragSmoothFactor: 0.85,           // Mượt khi drag
+    maxDragDistance: 0.02,            // Giới hạn lệch tối đa (m)
+    snapBackToHead: true,             // Nếu lệch thì tự snap lại
+    trackingSpeed: 1.5,               // Tốc độ bám theo
+    predictionFactor: 0.9,            // Dự đoán chuyển động
+    snapToleranceAngle: 0.0,          // 0 = không lệch khỏi đầu
+    stickiness: "extreme",            // Độ bám cao
+    disableBodyRecenter: true,        // Không trả lại thân
+    smoothing: 0.85,                  // Giảm rung khi bắn
+    boneOffset: {                    // Bù vị trí đầu
+        x: -0.0456970781,
+        y: -0.004478302,
+        z: -0.0200432576
+    },
+    rotationOffset: {                // Bù góc xoay
+        x: 0.0258174837,
+        y: -0.08611039,
+        z: -0.1402113,
+        w: 0.9860321
+    },
+    scale: {                         // Kích thước bone
+        x: 1.0,
+        y: 1.0,
+        z: 1.0
+    }
+},
     AimNeckLock: {
       aimTrackingBone: "bone_Neck",
   autoLock: true,
