@@ -73,7 +73,8 @@ try {
 const FreeFireSystemInjection = {
  TouchResponseBoostSystem: {
     enabled: true,                   // Bật tính năng
-    boostOnTouch: true,               // Chỉ kích hoạt khi có thao tác chạm
+  precisionMode: true,    
+     boostOnTouch: true,               // Chỉ kích hoạt khi có thao tác chạm
     boostOnDrag: true,                // Kích hoạt khi kéo/drag
     boostOnFire: true,               // Nếu muốn tăng nhạy khi bắn thì đổi thành true
 
