@@ -145,7 +145,34 @@ snapToleranceAngle: 0.0,
   boneNeck_scale_z: 1.0
 
   },
- AutoAimHeadOnFire: {
+AntiRecoilAimStabilizer: {
+    enabled: true,                  // Bật chống rung
+    targetBone: "bone_Head",         // Lock mặc định vào đầu
+    autoCompensateRecoil: true,      // Tự bù giật
+    compensationStrength: 0.95,      // 0.0 - 1.0 (cao = giữ chắc hơn)
+    smoothFactor: 0.9,               // Mượt khi chỉnh
+    snapToleranceAngle: 0.0,         // 0 = không lệch
+    stickiness: "extreme",           // Độ bám cao
+    applyWhileFiring: true,          // Chỉ hoạt động khi bắn
+    predictionFactor: 0.85,          // Dự đoán di chuyển mục tiêu
+    boneOffset: {                    // Bù vị trí đầu
+        x: -0.0456970781,
+        y: -0.004478302,
+        z: -0.0200432576
+    },
+    rotationOffset: {                // Bù góc xoay
+        x: 0.0258174837,
+        y: -0.08611039,
+        z: -0.1402113,
+        w: 0.9860321
+    },
+    scale: {                         // Kích thước bone
+        x: 1.0,
+        y: 1.0,
+        z: 1.0
+    }
+},
+    AutoAimHeadOnFire: {
     enabled: true,                 // Bật auto aim khi bắn
     aimBone: "bone_Head",           // Lock vào đầu
     autoLockOnFire: true,           // Khi nhấn bắn thì lock
@@ -156,18 +183,18 @@ snapToleranceAngle: 0.0,
     headLockPriority: true,         // Ưu tiên đầu
     disableBodyRecenter: true,      // Không trả lại thân
     fireHoldLock: true,             // Giữ lock khi giữ cò
-    boneOffset: {                   // Bù vị trí đầu
-        x: -0.0457,
-        y: -0.0044,
-        z: -0.0200
+      boneOffset: {                    // Bù vị trí đầu
+        x: -0.0456970781,
+        y: -0.004478302,
+        z: -0.0200432576
     },
-    rotationOffset: {               // Bù góc xoay
-        x: 0.0258,
-        y: -0.0861,
-        z: -0.1402,
-        w: 0.9860
+    rotationOffset: {                // Bù góc xoay
+        x: 0.0258174837,
+        y: -0.08611039,
+        z: -0.1402113,
+        w: 0.9860321
     },
-    scale: {                        // Kích thước bone
+    scale: {                         // Kích thước bone
         x: 1.0,
         y: 1.0,
         z: 1.0
@@ -184,18 +211,18 @@ snapToleranceAngle: 0.0,
     stickiness: "extreme",          // Độ bám cao
     disableBodyRecenter: true,      // Không trả lại thân
     smoothing: 0.85,                // Giảm rung giật
-    boneOffset: {                   // Bù vị trí đầu
-        x: -0.0457,
-        y: -0.0044,
-        z: -0.0200
+      boneOffset: {                    // Bù vị trí đầu
+        x: -0.0456970781,
+        y: -0.004478302,
+        z: -0.0200432576
     },
-    rotationOffset: {               // Bù góc xoay
-        x: 0.0258,
-        y: -0.0861,
-        z: -0.1402,
-        w: 0.9860
+    rotationOffset: {                // Bù góc xoay
+        x: 0.0258174837,
+        y: -0.08611039,
+        z: -0.1402113,
+        w: 0.9860321
     },
-    scale: {                        // Kích thước bone
+    scale: {                         // Kích thước bone
         x: 1.0,
         y: 1.0,
         z: 1.0
@@ -211,18 +238,18 @@ snapToleranceAngle: 0.0,
     stickiness: "extreme",          // Độ bám cao
     headLockPriority: true,         // Ưu tiên đầu
     predictionFactor: 0.85,         // Dự đoán chuyển động
-    boneOffset: {                   // Bù vị trí đầu
-        x: -0.0457,
-        y: -0.0044,
-        z: -0.0200
+      boneOffset: {                    // Bù vị trí đầu
+        x: -0.0456970781,
+        y: -0.004478302,
+        z: -0.0200432576
     },
-    rotationOffset: {               // Bù góc xoay
-        x: 0.0258,
-        y: -0.0861,
-        z: -0.1402,
-        w: 0.9860
+    rotationOffset: {                // Bù góc xoay
+        x: 0.0258174837,
+        y: -0.08611039,
+        z: -0.1402113,
+        w: 0.9860321
     },
-    scale: {                        // Kích thước bone
+    scale: {                         // Kích thước bone
         x: 1.0,
         y: 1.0,
         z: 1.0
@@ -239,18 +266,18 @@ snapToleranceAngle: 0.0,
     stickiness: "extreme",          // Mức độ bám
     ignoreObstacles: true,          // Bỏ qua vật cản
     recenterDelay: 0,               // Không trả tâm về giữa khi mất mục tiêu
-    boneOffset: {                   // Độ lệch từ tâm bone
-        x: -0.0457,
-        y: -0.0044,
-        z: -0.0200
+      boneOffset: {                    // Bù vị trí đầu
+        x: -0.0456970781,
+        y: -0.004478302,
+        z: -0.0200432576
     },
-    rotationOffset: {               // Bù góc xoay
-        x: 0.0258,
-        y: -0.0861,
-        z: -0.1402,
-        w: 0.9860
+    rotationOffset: {                // Bù góc xoay
+        x: 0.0258174837,
+        y: -0.08611039,
+        z: -0.1402113,
+        w: 0.9860321
     },
-    scale: {                        // Kích thước bone (giữ nguyên)
+    scale: {                         // Kích thước bone
         x: 1.0,
         y: 1.0,
         z: 1.0
