@@ -86,10 +86,10 @@ const FreeFireSystemInjection = {
     microAdjustSmoothing: 0.95,         // Siêu mượt khi micro adjust
 
     latencyCompensation: true,          
-    latencyMs: -10,                     // Bù âm => phản ứng sớm hơn dự kiến
+    latencyMs: -20,                     // Bù âm => phản ứng sớm hơn dự kiến
 
     overshootProtection: true,          
-    overshootLimit: 0.0008,              // Không cho vượt quá 0.8mm (cực chính xác)
+    overshootLimit: 0.0001,              // Không cho vượt quá 0.8mm (cực chính xác)
 
     debugLog: false,
 },
