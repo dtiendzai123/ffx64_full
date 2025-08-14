@@ -173,7 +173,35 @@ snapToleranceAngle: 0.0,
         z: 1.0
     }
 },
-   StableDragLockHead: {
+   HoldCrosshairOnHeadWhenFire: {
+    enabled: true,                 // Bật chế độ giữ tâm ở đầu khi bắn
+    targetBone: "bone_Head",        // Luôn lock vào đầu
+    autoLockOnFire: true,           // Khi bắn thì lock
+    holdLockWhileFiring: true,      // Giữ lock khi giữ cò
+    trackingSpeed: 1.5,             // Tốc độ bám theo
+    predictionFactor: 0.9,          // Hệ số dự đoán
+    snapToleranceAngle: 0.0,        // 0 = không lệch khỏi đầu
+    stickiness: "extreme",          // Độ bám cao
+    disableBodyRecenter: true,      // Không trả lại thân
+    smoothing: 0.85,                // Giảm rung giật
+    boneOffset: {                   // Bù vị trí đầu
+        x: -0.0457,
+        y: -0.0044,
+        z: -0.0200
+    },
+    rotationOffset: {               // Bù góc xoay
+        x: 0.0258,
+        y: -0.0861,
+        z: -0.1402,
+        w: 0.9860
+    },
+    scale: {                        // Kích thước bone
+        x: 1.0,
+        y: 1.0,
+        z: 1.0
+    }
+},
+    StableDragLockHead: {
     enabled: true,                 // Bật chế độ drag giữ nguyên đầu
     targetBone: "bone_Head",        // Luôn giữ ở đầu
     dragSmoothFactor: 0.85,         // Mượt khi kéo (0.0 = không, 1.0 = rất mượt)
