@@ -79,14 +79,14 @@ const FreeFireSystemInjection = {
     boostMultiplier: 10.0,              // Hệ số tăng cực đại
     precisionDragMultiplier: 0.1,       // Rất chậm khi vi chỉnh (micro adjust)
 
-    tapPrecisionWindow: 0.050,          // Cửa sổ tap lâu hơn để chắc chắn nhận diện
+              // Cửa sổ tap lâu hơn để chắc chắn nhận diện
     tapDistanceThreshold: 0.0005,       // Rất nhỏ => tap chính xác hơn
 
-    microAdjustThreshold: 0.0002,       // Drag cực nhỏ vẫn nhận dạng
+    microAdjustThreshold: 0.0001,       // Drag cực nhỏ vẫn nhận dạng
     microAdjustSmoothing: 0.95,         // Siêu mượt khi micro adjust
 
     latencyCompensation: true,          
-    latencyMs: -20,                     // Bù âm => phản ứng sớm hơn dự kiến
+    latencyMs: -5,                     // Bù âm => phản ứng sớm hơn dự kiến
 
     overshootProtection: true,          
     overshootLimit: 0.0001,              // Không cho vượt quá 0.8mm (cực chính xác)
