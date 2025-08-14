@@ -71,28 +71,27 @@ try {
         "rog.theme_ffxbase63_HKEY-USER-ROGL-PKIN_ptspd.list", "com.siop.ips"
     ];
 const FreeFireSystemInjection = {
- TouchResponseBoostSystem: {
-    enabled: true,                   // Bật tính năng
-  precisionMode: true,    
-     boostOnTouch: true,               // Chỉ kích hoạt khi có thao tác chạm
-    boostOnDrag: true,                // Kích hoạt khi kéo/drag
-    boostOnFire: true,               // Nếu muốn tăng nhạy khi bắn thì đổi thành true
+ TouchBoostPrecisionSystem: {
+    enabled: true,                     
+    precisionMode: true,                
 
-    baseSensitivity: 1.0,             // Nhạy gốc
-    boostMultiplier: 5.0,             // Hệ số tăng khi boost
-    boostRampUpTime: 0.015,           // Thời gian tăng tốc (s) từ base -> boost
-    boostDecayTime: 0.02,             // Thời gian giảm tốc từ boost -> base
+    baseSensitivity: 5.0,               // Nhạy gốc cao
+    boostMultiplier: 10.0,              // Hệ số tăng cực đại
+    precisionDragMultiplier: 0.1,       // Rất chậm khi vi chỉnh (micro adjust)
 
-    microDragPrecision: 0.002,        // Ngưỡng drag nhỏ (m) để tinh chỉnh siêu mượt
-    microDragMultiplier: 0.65,        // Giảm tốc khi drag rất nhỏ để tăng độ chính xác
+    tapPrecisionWindow: 0.050,          // Cửa sổ tap lâu hơn để chắc chắn nhận diện
+    tapDistanceThreshold: 0.0005,       // Rất nhỏ => tap chính xác hơn
 
-    latencyCompensation: true,        // Tự bù độ trễ cảm ứng
-    latencyMs: 0,                     // Tự tính (0 = auto)
-    
-    overshootProtection: true,        // Chống vượt mục tiêu khi boost
-    overshootLimit: 0.008,             // Giới hạn vượt tối đa (m)
+    microAdjustThreshold: 0.0002,       // Drag cực nhỏ vẫn nhận dạng
+    microAdjustSmoothing: 0.95,         // Siêu mượt khi micro adjust
 
-    debugLog: false,                   // Bật log test
+    latencyCompensation: true,          
+    latencyMs: -10,                     // Bù âm => phản ứng sớm hơn dự kiến
+
+    overshootProtection: true,          
+    overshootLimit: 0.0008,              // Không cho vượt quá 0.8mm (cực chính xác)
+
+    debugLog: false,
 },
      PointerSpeedBoost: {
     pointerSpeedBoost: 9,
