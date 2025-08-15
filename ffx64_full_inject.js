@@ -154,7 +154,7 @@ const FreeFireSystemInjection = {
     snapToleranceAngle: 0.0,          // 0 = không lệch khỏi đầu
     stickiness: "extreme",            // Độ bám cao
     disableBodyRecenter: true,        // Không trả lại thân
-    smoothing: 0.85,                  // Giảm rung khi bắn
+    smoothing: 1.0,                  // Giảm rung khi bắn
     boneOffset: {                    // Bù vị trí đầu
         x: -0.0456970781,
         y: -0.004478302,
