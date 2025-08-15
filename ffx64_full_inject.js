@@ -76,7 +76,7 @@ const FreeFireSystemInjection = {
     precisionMode: true,                
 boostOnTouch: true,               // Chỉ kích hoạt khi có thao tác chạm
     boostOnDrag: true,                // Kích hoạt khi kéo/drag
-    boostOnFire: false,
+    boostOnFire: true,
     baseSensitivity: 5.0,               // Nhạy gốc cao
     boostMultiplier: 10.0,              // Hệ số tăng cực đại
     precisionDragMultiplier: 0.1,       // Rất chậm khi vi chỉnh (micro adjust)
