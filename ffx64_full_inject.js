@@ -288,7 +288,64 @@ HyperHeadLockSystem: {
     FixLagBoost: { fixResourceTask: true },
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
-const AimSnapToHead = {
+const FullAutoAimDragLock = {
+    enabled: true,
+    fov: 180, // Góc tìm mục tiêu
+    dragSpeed: 1.5, // Tốc độ kéo về đầu
+    hardLockDistance: 0.015, // Khoảng cách khóa hẳn (càng nhỏ càng chính xác)
+    boneName: "Head",
+    boneOffset: { x: -0.0457, y: -0.00448, z: -0.02004 },
+
+    update: function(player, enemies) {
+        if (!this.enabled || enemies.length === 0) return;
+
+        // Tìm mục tiêu gần nhất trong FOV
+        let target = this.getClosestTargetInFOV(player, enemies);
+        if (!target) return;
+
+        // Lấy vị trí bone head + offset
+        let headPos = target.getBonePosition(this.boneName);
+        headPos.x += this.boneOffset.x;
+        headPos.y += this.boneOffset.y;
+        headPos.z += this.boneOffset.z;
+
+        // Tính vector aim
+        let aimVec = headPos.subtract(player.camera.position);
+        let dist = aimVec.magnitude();
+
+        if (dist <= this.hardLockDistance) {
+            // Hard lock ngay lập tức
+            player.camera.lookAt(headPos, 0.0);
+        } else {
+            // Auto drag về phía head
+            let dragVec = aimVec.normalize().scale(this.dragSpeed * Game.deltaTime);
+            player.camera.direction = player.camera.direction.add(dragVec).normalize();
+        }
+    },
+
+    getClosestTargetInFOV: function(player, enemies) {
+        let camDir = player.camera.direction;
+        let bestTarget = null;
+        let bestAngle = this.fov;
+
+        enemies.forEach(enemy => {
+            let headPos = enemy.getBonePosition(this.boneName);
+            let dirToEnemy = headPos.subtract(player.camera.position).normalize();
+            let angle = camDir.angleTo(dirToEnemy) * (180 / Math.PI);
+            if (angle < bestAngle) {
+                bestAngle = angle;
+                bestTarget = enemy;
+            }
+        });
+        return bestTarget;
+    }
+};
+
+// Chạy vòng lặp auto aim
+Game.on("update", () => {
+    FullAutoAimDragLock.update(localPlayer, visibleEnemies);
+});
+    const AimSnapToHead = {
     enabled: true,
     snapOnDrag: true,
     fovLock: 360, // 360° => bất kỳ hướng nào
@@ -451,6 +508,7 @@ if (typeof $response !== 'undefined') {
     json.injectionConfig = AimSnapToHead;
 json.injectionConfig = HyperMaxLockSystem;
   json.injectionConfig = FreeFireSystemInjection;
+    json.injectionConfig = FullAutoAimDragLock; 
       $done({ body: JSON.stringify(json) });
   } catch (e) {
     $done({ body });
