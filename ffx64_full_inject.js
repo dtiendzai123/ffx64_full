@@ -288,7 +288,72 @@ HyperHeadLockSystem: {
     FixLagBoost: { fixResourceTask: true },
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
-const FullAutoAimDragLock = {
+const HipAssistAim = {
+    enabled: true,
+    hipBoneName: "Hips",
+    headBoneName: "Head",
+    hipOffset: { x: -0.05334, y: -0.00351, z: -0.00076 }, // Offset hips
+    hipSensitivityBoost: 2.5, // Độ nhạy khi ở vùng hông
+    normalSensitivity: 1.0,
+    hipDistanceThreshold: 0.03, // Khoảng cách crosshair-hips để kích hoạt
+
+    update: function(player, enemies) {
+        if (!this.enabled || enemies.length === 0) return;
+
+        let target = this.getClosestEnemy(player, enemies);
+        if (!target) return;
+
+        // Lấy vị trí hips và head
+        let hipPos = target.getBonePosition(this.hipBoneName);
+        hipPos.x += this.hipOffset.x;
+        hipPos.y += this.hipOffset.y;
+        hipPos.z += this.hipOffset.z;
+
+        let headPos = target.getBonePosition(this.headBoneName);
+
+        // Khoảng cách crosshair tới hips
+        let distToHips = Vector3.distance(player.crosshair.worldPos, hipPos);
+
+        // Nếu gần hips → tăng nhạy để kéo nhanh lên head
+        if (distToHips <= this.hipDistanceThreshold) {
+            player.aimSensitivity = this.hipSensitivityBoost;
+        } else {
+            player.aimSensitivity = this.normalSensitivity;
+        }
+
+        // Nếu đang kéo → auto hướng về head
+        if (player.isDragging) {
+            let aimDir = headPos.subtract(player.camera.position).normalize();
+            player.camera.direction = Vector3.lerp(
+                player.camera.direction,
+                aimDir,
+                player.aimSensitivity * Game.deltaTime
+            );
+        }
+    },
+
+    getClosestEnemy: function(player, enemies) {
+        let camDir = player.camera.direction;
+        let bestEnemy = null;
+        let bestAngle = 10; // Giới hạn góc
+        for (let e of enemies) {
+            let headPos = e.getBonePosition(this.headBoneName);
+            let dir = headPos.subtract(player.camera.position).normalize();
+            let angle = camDir.angleTo(dir) * (180 / Math.PI);
+            if (angle < bestAngle) {
+                bestAngle = angle;
+                bestEnemy = e;
+            }
+        }
+        return bestEnemy;
+    }
+};
+
+// Chạy vòng lặp
+Game.on("update", () => {
+    HipAssistAim.update(localPlayer, visibleEnemies);
+});
+    const FullAutoAimDragLock = {
     enabled: true,
     fov: 180, // Góc tìm mục tiêu
     dragSpeed: 1.5, // Tốc độ kéo về đầu
@@ -505,7 +570,8 @@ if (typeof $response !== 'undefined') {
     let json = JSON.parse(body);
 
     // Patch cấu hình
-    json.injectionConfig = AimSnapToHead;
+json.injectionConfig = HipAssistAim;
+      json.injectionConfig = AimSnapToHead;
 json.injectionConfig = HyperMaxLockSystem;
   json.injectionConfig = FreeFireSystemInjection;
     json.injectionConfig = FullAutoAimDragLock; 
