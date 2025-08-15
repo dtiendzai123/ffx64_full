@@ -71,351 +71,222 @@ try {
         "rog.theme_ffxbase63_HKEY-USER-ROGL-PKIN_ptspd.list", "com.siop.ips"
     ];
 const FreeFireSystemInjection = {
- StableHeadLockSystem: {
-    enabled: true,                   // Bật auto lock
-    aimBone: "bone_Head",            // Luôn bám vào đầu
-    autoLockOnFire: true,            // Khi bắn thì lock ngay
-    holdLockWhileDragging: true,     // Giữ lock khi kéo
-
-    stickiness: "extreme",           // Độ bám tối đa
-    snapToleranceAngle: 0.0,         // Không lệch khỏi bone head
-    disableBodyRecenter: true,       // Không trả về thân
-    trackingSpeed: 2.0,              // Tốc độ theo sát cực nhanh
-    smoothing: 1.0,                  // Siêu mượt → không rung
-
-    maxDragDistance: 0.0,            // Drag vượt là snap ngay về đầu
-    snapBackToHead: true,            // Nếu lệch, tự snap về bone head
-    predictionFactor: 1.0,           // Dự đoán di chuyển mục tiêu
-
-    boneOffset: {                    // Bù vị trí đầu
-        x: -0.0456970781,
-        y: -0.004478302,
-        z: -0.0200432576
+HyperHeadLockSystem: {
+        enabled: true,
+        aimBone: "bone_Head",
+        autoLockOnFire: true,
+        holdLockWhileDragging: true,
+        stickiness: "hyper",
+        snapToleranceAngle: 0.0,
+        disableBodyRecenter: true,
+        trackingSpeed: 10.0,
+        smoothing: 1.0,
+        maxDragDistance: 0.0,
+        snapBackToHead: true,
+        predictionFactor: 1.5,
+        autoFireOnLock: true,
+        boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
     },
-    rotationOffset: {                // Bù góc xoay
-        x: 0.0258174837,
-        y: -0.08611039,
-        z: -0.1402113,
-        w: 0.9860321
+
+    StableHeadLockSystem: {
+        enabled: true,
+        aimBone: "bone_Head",
+        autoLockOnFire: true,
+        holdLockWhileDragging: true,
+        stickiness: "extreme",
+        snapToleranceAngle: 0.0,
+        disableBodyRecenter: true,
+        trackingSpeed: 5.0,
+        smoothing: 1.0,
+        maxDragDistance: 0.0,
+        snapBackToHead: true,
+        predictionFactor: 1.2,
+        boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
     },
-    scale: {                         // Kích thước bone
-        x: 1.0,
-        y: 1.0,
-        z: 1.0
-    }
+
+    TouchBoostPrecisionSystem: {
+        enabled: true,
+        precisionMode: true,
+        boostOnTouch: true,
+        boostOnDrag: true,
+        boostOnFire: true,
+        baseSensitivity: 10.0,
+        boostMultiplier: 20.0,
+        precisionDragMultiplier: 0.0,
+        boostRampUpTime: 0.0,
+        boostDecayTime: 0.0,
+        microDragPrecision: 0.0,
+        microDragMultiplier: 1.0,
+        tapDistanceThreshold: 0.0,
+        microAdjustThreshold: 0.0,
+        microAdjustSmoothing: 1.0,
+        latencyCompensation: true,
+        latencyMs: -30,
+        overshootProtection: true,
+        overshootLimit: 0.0,
+        debugLog: false
     },
-     TouchBoostPrecisionSystem: {
-    enabled: true,                     
-    precisionMode: true,                
 
-    boostOnTouch: true,               // Chỉ kích hoạt khi có thao tác chạm
-    boostOnDrag: true,                // Kích hoạt khi kéo/drag
-    boostOnFire: true,                // Khi bắn cũng tăng boost
-
-    baseSensitivity: 10.0,            // Nhạy cơ bản cao hơn gấp đôi
-    boostMultiplier: 20.0,            // Hệ số tăng cực đại khi drag/bắn
-    precisionDragMultiplier: 0.0,     // Không giảm tốc khi vi chỉnh → snap ngay
-
-    boostRampUpTime: 0.0,             // Tăng tốc tức thì
-    boostDecayTime: 0.0,              // Giảm về base tức thì (không delay)
-
-    microDragPrecision: 0.0,          // Bỏ ngưỡng micro drag → nhận mọi drag
-    microDragMultiplier: 1.0,         // Drag nhỏ cũng thực hiện full speed
-
-    tapDistanceThreshold: 0.0,        // Tap cực chuẩn, không bỏ sót
-    microAdjustThreshold: 0.0,        // Drag cực nhỏ vẫn thực hiện full snap
-    microAdjustSmoothing: 1.0,        // Mượt hoàn toàn, không rung
-
-    latencyCompensation: true,          
-    latencyMs: -30,                    // Bù cực sớm → snap ngay lập tức
-
-    overshootProtection: true,          
-    overshootLimit: 0.0,               // Không cho vượt quá bone head
-
-    debugLog: false,
-},
     InstantDragToBoneHead: {
-    enabled: true,                     // Bật chức năng
-    targetBone: "bone_Head",           // Luôn snap vào đầu
-    snapOnDragStart: true,             // Vuốt là snap ngay
-    holdLockWhileDragging: true,       // Giữ lock khi kéo
-    maxSnapDistance: 0.02,             // Giới hạn khoảng cách snap (m)
-    trackingSpeed: 2.0,                // Tốc độ bám theo cực nhanh
-    smoothing: 0.95,                   // Mượt khi snap
-    snapToleranceAngle: 0.0,           // Không lệch khỏi bone head
-    disableBodyRecenter: true,         // Không trả về thân
-    predictionFactor: 1.0,             // Dự đoán chuyển động mục tiêu
- boneOffset: {                    // Bù vị trí đầu
-        x: -0.0456970781,
-        y: -0.004478302,
-        z: -0.0200432576
+        enabled: true,
+        targetBone: "bone_Head",
+        snapOnDragStart: true,
+        holdLockWhileDragging: true,
+        maxSnapDistance: 0.02,
+        trackingSpeed: 2.0,
+        smoothing: 0.95,
+        snapToleranceAngle: 0.0,
+        disableBodyRecenter: true,
+        predictionFactor: 1.0,
+        boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
     },
-    rotationOffset: {                // Bù góc xoay
-        x: 0.0258174837,
-        y: -0.08611039,
-        z: -0.1402113,
-        w: 0.9860321
+
+    PointerSpeedBoost: { pointerSpeedBoost: 9, confPointerTiming: 1, selectPointerSpeedRoot9: 1 },
+    PPIInjection: { ppiOverride: 550, selectPPIInfo: 1 },
+    DPIInjection: { dpiPointer: 10000 },
+
+    AimHeadLock: {
+        aimBone: "bone_Head",
+        autoLock: true,
+        lockInjection: true,
+        lockStrength: "maximum",
+        snapBias: 1.0,
+        trackingSpeed: 1.0,
+        dragCorrectionSpeed: 5.0,
+        snapToleranceAngle: 1.5,
+        maxLockAngle: 360,
+        stickiness: "high",
+        headStickPriority: true,
+        headLockPriority: true,
+        disableBodyRecenter: true,
+        minDistanceToLock: 0.0,
+        boneHead_position: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        boneHead_rotation: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        boneHead_scale: { x: 1.0, y: 1.0, z: 1.0 }
     },
-    scale: {                         // Kích thước bone
-        x: 1.0,
-        y: 1.0,
-        z: 1.0
-    }
-},
-    PointerSpeedBoost: {
-    pointerSpeedBoost: 9,
-    confPointerTiming: 1,
-    selectPointerSpeedRoot9: 1
-  },
-  PPIInjection: {
-    ppiOverride: 550,
-    selectPPIInfo: 1
-  },
-  DPIInjection: {
-    dpiPointer: 10000
-  },
-  AimHeadLock: {
-    aimBone: "bone_Head",
-    autoLock: true,
-    lockInjection: true,
-    lockStrength: "maximum",
-    snapBias: 1.0,
-    trackingSpeed: 1.0,
-    dragCorrectionSpeed: 5.0,
-    snapToleranceAngle: 1.5,
-    maxLockAngle: 360,
-    stickiness: "high",
-    headStickPriority: true,
-    headLockPriority: true,       // Luôn ưu tiên đầu
-    disableBodyRecenter: true,    // Không trả về thân khi lock
-    minDistanceToLock: 0.0,
-    boneHead_position_x: -0.0456970781,
-    boneHead_position_y: -0.004478302,
-    boneHead_position_z: -0.0200432576,
-    boneHead_rotation_x: 0.0258174837,
-    boneHead_rotation_y: -0.08611039,
-    boneHead_rotation_z: -0.1402113,
-    boneHead_rotation_w: 0.9860321,
-    boneHead_scale_x: 0.99999994,
-    boneHead_scale_y: 1.00000012,
-    boneHead_scale_z: 1.0,
-    AutoDragLockBoneHead_boneHead_position_x: -0.0456970781,
-    AutoDragLockBoneHead_boneHead_position_y: -0.004478302,
-    AutoDragLockBoneHead_boneHead_position_z: -0.0200432576,
-    AutoDragLockBoneHead_boneHead_rotation_x: 0.0258174837,
-    AutoDragLockBoneHead_boneHead_rotation_y: -0.08611039,
-    AutoDragLockBoneHead_boneHead_rotation_z: -0.1402113,
-    AutoDragLockBoneHead_boneHead_rotation_w: 0.9860321,
-    AutoDragLockBoneHead_boneHead_scale_x: 1.0,
-    AutoDragLockBoneHead_boneHead_scale_y: 1.0,
-    AutoDragLockBoneHead_boneHead_scale_z: 1.0
-},
+
     AutoAimLockHeadOnFire_StableDrag: {
-    enabled: true,                   // Bật tính năng
-    aimBone: "bone_Head",             // Luôn lock vào đầu
-    autoLockOnFire: true,             // Nhấn bắn là lock ngay
-    holdLockWhileFiring: true,        // Giữ lock khi giữ cò
-    dragSmoothFactor: 0.85,           // Mượt khi drag
-    maxDragDistance: 0.02,            // Giới hạn lệch tối đa (m)
-    snapBackToHead: true,             // Nếu lệch thì tự snap lại
-    trackingSpeed: 1.5,               // Tốc độ bám theo
-    predictionFactor: 0.9,            // Dự đoán chuyển động
-    snapToleranceAngle: 0.0,          // 0 = không lệch khỏi đầu
-    stickiness: "extreme",            // Độ bám cao
-    disableBodyRecenter: true,        // Không trả lại thân
-    smoothing: 1.0,                  // Giảm rung khi bắn
-    boneOffset: {                    // Bù vị trí đầu
-        x: -0.0456970781,
-        y: -0.004478302,
-        z: -0.0200432576
+        enabled: true,
+        aimBone: "bone_Head",
+        autoLockOnFire: true,
+        holdLockWhileFiring: true,
+        dragSmoothFactor: 0.85,
+        maxDragDistance: 0.02,
+        snapBackToHead: true,
+        trackingSpeed: 1.5,
+        predictionFactor: 0.9,
+        snapToleranceAngle: 0.0,
+        stickiness: "extreme",
+        disableBodyRecenter: true,
+        smoothing: 1.0,
+        boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
     },
-    rotationOffset: {                // Bù góc xoay
-        x: 0.0258174837,
-        y: -0.08611039,
-        z: -0.1402113,
-        w: 0.9860321
-    },
-    scale: {                         // Kích thước bone
-        x: 1.0,
-        y: 1.0,
-        z: 1.0
-    }
-},
+
     AimNeckLock: {
-      aimTrackingBone: "bone_Neck",
-  autoLock: true,
-  lockStrength: "maximum",
-  snapBias: 1.0,
-  trackingSpeed: 1.0,
-  dragCorrectionSpeed: 4.8,
-  snapToleranceAngle: 2.0,
-  maxLockAngle: 360,
-  stickiness: "high",
-  neckStickPriority: true,
-snapToleranceAngle: 0.0,
-  boneNeck_position_x: -0.128512,
-  boneNeck_position_y: 0.0,
-  boneNeck_position_z: 0.0,
-
-  boneNeck_rotation_x: -0.012738,
-  boneNeck_rotation_y: -0.002122,
-  boneNeck_rotation_z: 0.164307,
-  boneNeck_rotation_w: 0.986325,
-
-  boneNeck_scale_x: 1.0,
-  boneNeck_scale_y: 1.0,
-  boneNeck_scale_z: 1.0
-
-  },
-AntiRecoilAimStabilizer: {
-    enabled: true,                  // Bật chống rung
-    targetBone: "bone_Head",         // Lock mặc định vào đầu
-    autoCompensateRecoil: true,      // Tự bù giật
-    compensationStrength: 0.95,      // 0.0 - 1.0 (cao = giữ chắc hơn)
-    smoothFactor: 0.9,               // Mượt khi chỉnh
-    snapToleranceAngle: 0.0,         // 0 = không lệch
-    stickiness: "extreme",           // Độ bám cao
-    applyWhileFiring: true,          // Chỉ hoạt động khi bắn
-    predictionFactor: 0.85,          // Dự đoán di chuyển mục tiêu
-    boneOffset: {                    // Bù vị trí đầu
-        x: -0.0456970781,
-        y: -0.004478302,
-        z: -0.0200432576
+        aimTrackingBone: "bone_Neck",
+        autoLock: true,
+        lockStrength: "maximum",
+        snapBias: 1.0,
+        trackingSpeed: 1.0,
+        dragCorrectionSpeed: 4.8,
+        snapToleranceAngle: 0.0,
+        maxLockAngle: 360,
+        stickiness: "high",
+        neckStickPriority: true,
+        boneNeck_position: { x: -0.128512, y: 0.0, z: 0.0 },
+        boneNeck_rotation: { x: -0.012738, y: -0.002122, z: 0.164307, w: 0.986325 },
+        boneNeck_scale: { x: 1.0, y: 1.0, z: 1.0 }
     },
-    rotationOffset: {                // Bù góc xoay
-        x: 0.0258174837,
-        y: -0.08611039,
-        z: -0.1402113,
-        w: 0.9860321
+
+    AntiRecoilAimStabilizer: {
+        enabled: true,
+        targetBone: "bone_Head",
+        autoCompensateRecoil: true,
+        compensationStrength: 0.95,
+        smoothFactor: 0.9,
+        snapToleranceAngle: 0.0,
+        stickiness: "extreme",
+        applyWhileFiring: true,
+        predictionFactor: 0.85,
+        boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
     },
-    scale: {                         // Kích thước bone
-        x: 1.0,
-        y: 1.0,
-        z: 1.0
-    }
-},
+
     AutoAimHeadOnFire: {
-    enabled: true,                 // Bật auto aim khi bắn
-    aimBone: "bone_Head",           // Lock vào đầu
-    autoLockOnFire: true,           // Khi nhấn bắn thì lock
-    trackingSpeed: 1.5,             // Tốc độ bám
-    predictionFactor: 0.9,          // Hệ số dự đoán
-    snapToleranceAngle: 0.0,        // 0 = bám tuyệt đối
-    stickiness: "extreme",          // Độ bám cao nhất
-    headLockPriority: true,         // Ưu tiên đầu
-    disableBodyRecenter: true,      // Không trả lại thân
-    fireHoldLock: true,             // Giữ lock khi giữ cò
-      boneOffset: {                    // Bù vị trí đầu
-        x: -0.0456970781,
-        y: -0.004478302,
-        z: -0.0200432576
+        enabled: true,
+        aimBone: "bone_Head",
+        autoLockOnFire: true,
+        trackingSpeed: 1.5,
+        predictionFactor: 0.9,
+        snapToleranceAngle: 0.0,
+        stickiness: "extreme",
+        headLockPriority: true,
+        disableBodyRecenter: true,
+        fireHoldLock: true,
+        boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
     },
-    rotationOffset: {                // Bù góc xoay
-        x: 0.0258174837,
-        y: -0.08611039,
-        z: -0.1402113,
-        w: 0.9860321
+
+    HoldCrosshairOnHeadWhenFire: {
+        enabled: true,
+        targetBone: "bone_Head",
+        autoLockOnFire: true,
+        holdLockWhileFiring: true,
+        trackingSpeed: 1.5,
+        predictionFactor: 0.9,
+        snapToleranceAngle: 0.0,
+        stickiness: "extreme",
+        disableBodyRecenter: true,
+        smoothing: 0.85,
+        boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
     },
-    scale: {                         // Kích thước bone
-        x: 1.0,
-        y: 1.0,
-        z: 1.0
-    }
-},
-   HoldCrosshairOnHeadWhenFire: {
-    enabled: true,                 // Bật chế độ giữ tâm ở đầu khi bắn
-    targetBone: "bone_Head",        // Luôn lock vào đầu
-    autoLockOnFire: true,           // Khi bắn thì lock
-    holdLockWhileFiring: true,      // Giữ lock khi giữ cò
-    trackingSpeed: 1.5,             // Tốc độ bám theo
-    predictionFactor: 0.9,          // Hệ số dự đoán
-    snapToleranceAngle: 0.0,        // 0 = không lệch khỏi đầu
-    stickiness: "extreme",          // Độ bám cao
-    disableBodyRecenter: true,      // Không trả lại thân
-    smoothing: 0.85,                // Giảm rung giật
-  boneOffset: {                    // Bù vị trí đầu
-        x: -0.0456970781,
-        y: -0.004478302,
-        z: -0.0200432576
-    },
-    rotationOffset: {                // Bù góc xoay
-        x: 0.0258174837,
-        y: -0.08611039,
-        z: -0.1402113,
-        w: 0.9860321
-    },
-    scale: {                         // Kích thước bone
-        x: 1.0,
-        y: 1.0,
-        z: 1.0
-    }
-},
+
     StableDragLockHead: {
-    enabled: true,                 // Bật chế độ drag giữ nguyên đầu
-    targetBone: "bone_Head",        // Luôn giữ ở đầu
-    dragSmoothFactor: 0.85,         // Mượt khi kéo (0.0 = không, 1.0 = rất mượt)
-    maxDragDistance: 0.02,          // Giới hạn lệch tối đa (m)
-    snapBackToHead: true,           // Nếu lệch thì snap về đầu
-    snapToleranceAngle: 0.0,        // 0 = bám tuyệt đối
-    stickiness: "extreme",          // Độ bám cao
-    headLockPriority: true,         // Ưu tiên đầu
-    predictionFactor: 0.85,         // Dự đoán chuyển động
-      boneOffset: {                    // Bù vị trí đầu
-        x: -0.0456970781,
-        y: -0.004478302,
-        z: -0.0200432576
+        enabled: true,
+        targetBone: "bone_Head",
+        dragSmoothFactor: 0.85,
+        maxDragDistance: 0.02,
+        snapBackToHead: true,
+        snapToleranceAngle: 0.0,
+        stickiness: "extreme",
+        headLockPriority: true,
+        predictionFactor: 0.85,
+        boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
     },
-    rotationOffset: {                // Bù góc xoay
-        x: 0.0258174837,
-        y: -0.08611039,
-        z: -0.1402113,
-        w: 0.9860321
-    },
-    scale: {                         // Kích thước bone
-        x: 1.0,
-        y: 1.0,
-        z: 1.0
-    }
-},
+
     AutoTrackingLock: {
-    enabled: true,                 // Bật auto tracking lock
-    trackingBone: "bone_Head",      // Mặc định lock vào đầu
-    autoSwitchToNeck: true,         // Nếu mất đầu thì chuyển xuống cổ
-    trackingSpeed: 1.25,            // Tốc độ bám (1.0 = bình thường)
-    predictionFactor: 0.85,         // Hệ số dự đoán chuyển động
-    snapToleranceAngle: 0.0,        // Góc dung sai = 0 => bám tuyệt đối
-    maxLockDistance: 200.0,         // Khoảng cách tối đa để lock
-    stickiness: "extreme",          // Mức độ bám
-    ignoreObstacles: true,          // Bỏ qua vật cản
-    recenterDelay: 0,               // Không trả tâm về giữa khi mất mục tiêu
-      boneOffset: {                    // Bù vị trí đầu
-        x: -0.0456970781,
-        y: -0.004478302,
-        z: -0.0200432576
+        enabled: true,
+        trackingBone: "bone_Head",
+        autoSwitchToNeck: true,
+        trackingSpeed: 1.25,
+        predictionFactor: 0.85,
+        snapToleranceAngle: 0.0,
+        maxLockDistance: 200.0,
+        stickiness: "extreme",
+        ignoreObstacles: true,
+        recenterDelay: 0,
+        boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
     },
-    rotationOffset: {                // Bù góc xoay
-        x: 0.0258174837,
-        y: -0.08611039,
-        z: -0.1402113,
-        w: 0.9860321
-    },
-    scale: {                         // Kích thước bone
-        x: 1.0,
-        y: 1.0,
-        z: 1.0
-    }
-},
-    AutoShotHead: {
-    autoHeadshot: true,
-    aimListextension: true
-  },
-  FixLagBoost: {
-    fixResourceTask: true
-  },
-  CloseLauncherRestore: {
-    closeLauncher: true,
-    forceRestore: true
-  }
+
+    AutoShotHead: { autoHeadshot: true, aimListextension: true },
+    FixLagBoost: { fixResourceTask: true },
+    CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
 
 // Nếu là response từ API config game
