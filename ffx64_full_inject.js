@@ -74,31 +74,33 @@ const FreeFireSystemInjection = {
  TouchBoostPrecisionSystem: {
     enabled: true,                     
     precisionMode: true,                
-boostOnTouch: true,               // Chỉ kích hoạt khi có thao tác chạm
+
+    boostOnTouch: true,               // Chỉ kích hoạt khi có thao tác chạm
     boostOnDrag: true,                // Kích hoạt khi kéo/drag
-    boostOnFire: true,
-    baseSensitivity: 5.0,               // Nhạy gốc cao
-    boostMultiplier: 10.0,              // Hệ số tăng cực đại
-    precisionDragMultiplier: 0.1,       // Rất chậm khi vi chỉnh (micro adjust)
-boostRampUpTime: 0.015,           // Thời gian tăng tốc (s) từ base -> boost
-    boostDecayTime: 0.02,             // Thời gian giảm tốc từ boost -> base
+    boostOnFire: true,                // Khi bắn cũng tăng boost
 
-    microDragPrecision: 0.002,        // Ngưỡng drag nhỏ (m) để tinh chỉnh siêu mượt
-    microDragMultiplier: 0.65,        // Giảm tốc khi drag rất nhỏ để tăng độ chính xác
-              // Cửa sổ tap lâu hơn để chắc chắn nhận diện
-    tapDistanceThreshold: 0.0001,       // Rất nhỏ => tap chính xác hơn
+    baseSensitivity: 10.0,            // Nhạy cơ bản cao hơn gấp đôi
+    boostMultiplier: 20.0,            // Hệ số tăng cực đại khi drag/bắn
+    precisionDragMultiplier: 0.0,     // Không giảm tốc khi vi chỉnh → snap ngay
 
-    microAdjustThreshold: 0.0001,       // Drag cực nhỏ vẫn nhận dạng
-    microAdjustSmoothing: 1.0,         // Siêu mượt khi micro adjust
+    boostRampUpTime: 0.0,             // Tăng tốc tức thì
+    boostDecayTime: 0.0,              // Giảm về base tức thì (không delay)
+
+    microDragPrecision: 0.0,          // Bỏ ngưỡng micro drag → nhận mọi drag
+    microDragMultiplier: 1.0,         // Drag nhỏ cũng thực hiện full speed
+
+    tapDistanceThreshold: 0.0,        // Tap cực chuẩn, không bỏ sót
+    microAdjustThreshold: 0.0,        // Drag cực nhỏ vẫn thực hiện full snap
+    microAdjustSmoothing: 1.0,        // Mượt hoàn toàn, không rung
 
     latencyCompensation: true,          
-    latencyMs: -25,                     // Bù âm => phản ứng sớm hơn dự kiến
+    latencyMs: -30,                    // Bù cực sớm → snap ngay lập tức
 
     overshootProtection: true,          
-    overshootLimit: 0.0001,              // Không cho vượt quá 0.8mm (cực chính xác)
+    overshootLimit: 0.0,               // Không cho vượt quá bone head
 
     debugLog: false,
-},
+}
     InstantDragToBoneHead: {
     enabled: true,                     // Bật chức năng
     targetBone: "bone_Head",           // Luôn snap vào đầu
