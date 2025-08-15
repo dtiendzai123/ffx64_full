@@ -293,9 +293,9 @@ const HipAssistAim = {
     hipBoneName: "Hips",
     headBoneName: "Head",
     hipOffset: { x: -0.05334, y: -0.00351, z: -0.00076 }, // Offset hips
-    hipSensitivityBoost: 2.5, // Độ nhạy khi ở vùng hông
-    normalSensitivity: 1.0,
-    hipDistanceThreshold: 0.03, // Khoảng cách crosshair-hips để kích hoạt
+    hipSensitivityBoost: 5.5, // Độ nhạy khi ở vùng hông
+    normalSensitivity: 5.0,
+    hipDistanceThreshold: 0.001, // Khoảng cách crosshair-hips để kích hoạt
 
     update: function(player, enemies) {
         if (!this.enabled || enemies.length === 0) return;
@@ -356,7 +356,7 @@ Game.on("update", () => {
     const FullAutoAimDragLock = {
     enabled: true,
     fov: 180, // Góc tìm mục tiêu
-    dragSpeed: 1.5, // Tốc độ kéo về đầu
+    dragSpeed: 2.5, // Tốc độ kéo về đầu
     hardLockDistance: 0.015, // Khoảng cách khóa hẳn (càng nhỏ càng chính xác)
     boneName: "Head",
     boneOffset: { x: -0.0457, y: -0.00448, z: -0.02004 },
