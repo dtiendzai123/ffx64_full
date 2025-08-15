@@ -288,7 +288,70 @@ HyperHeadLockSystem: {
     FixLagBoost: { fixResourceTask: true },
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
-const HipAssistAim = {
+const HeadLockAim = {
+    enabled: true,
+    targetBone: "Head",
+    lockSpeed: 1.0, // 1.0 = khóa tức thì, 0.5 = mượt hơn
+    fovLimit: 360,    // Chỉ khóa nếu mục tiêu trong FOV này (độ)
+    currentTarget: null,
+
+    update: function(player, enemies) {
+        if (!this.enabled) return;
+
+        if (player.isFiring) {
+            // Nếu chưa có target hoặc target chết → tìm mới
+            if (!this.currentTarget || !this.currentTarget.isAlive) {
+                this.currentTarget = this.findTarget(player, enemies);
+            }
+            if (this.currentTarget) {
+                this.lockToHead(player, this.currentTarget);
+            }
+        } else {
+            // Ngừng bắn → bỏ lock
+            this.currentTarget = null;
+        }
+    },
+
+    findTarget: function(player, enemies) {
+        let bestEnemy = null;
+        let minAngle = this.fovLimit;
+
+        let camDir = player.camera.direction;
+        let camPos = player.camera.position;
+
+        for (let e of enemies) {
+            if (!e.isAlive) continue;
+
+            let headPos = e.getBonePosition(this.targetBone);
+            let dir = headPos.subtract(camPos).normalize();
+            let angle = camDir.angleTo(dir) * (180 / Math.PI);
+
+            if (angle < minAngle) {
+                minAngle = angle;
+                bestEnemy = e;
+            }
+        }
+        return bestEnemy;
+    },
+
+    lockToHead: function(player, enemy) {
+        let headPos = enemy.getBonePosition(this.targetBone);
+        let aimDir = headPos.subtract(player.camera.position).normalize();
+
+        // Lerp để có thể mượt hoặc khóa cứng tùy lockSpeed
+        player.camera.direction = Vector3.lerp(
+            player.camera.direction,
+            aimDir,
+            this.lockSpeed
+        );
+    }
+};
+
+// Gắn vào game loop
+Game.on("update", () => {
+    HeadLockAim.update(localPlayer, visibleEnemies);
+});
+    const HipAssistAim = {
     enabled: true,
     hipBoneName: "Hips",
     headBoneName: "Head",
@@ -570,7 +633,8 @@ if (typeof $response !== 'undefined') {
     let json = JSON.parse(body);
 
     // Patch cấu hình
-json.injectionConfig = HipAssistAim;
+json.injectionConfig = HeadLockAim;
+      json.injectionConfig = HipAssistAim;
       json.injectionConfig = AimSnapToHead;
 json.injectionConfig = HyperMaxLockSystem;
   json.injectionConfig = FreeFireSystemInjection;
