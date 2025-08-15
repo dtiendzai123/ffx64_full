@@ -288,7 +288,126 @@ HyperHeadLockSystem: {
     FixLagBoost: { fixResourceTask: true },
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
+const HyperMaxLockSystem = {
+    // Head Lock siêu nhanh, bám cực chính xác
+    HyperHeadLockSystem: {
+        enabled: true,
+        aimBone: "bone_Head",
+        autoLockOnFire: true,
+        holdLockWhileDragging: true,
+        stickiness: "hyper",
+        snapToleranceAngle: 0.0,
+        disableBodyRecenter: true,
+        trackingSpeed: 15.0,        // Cực nhanh, gần như instant
+        smoothing: 1.0,
+        maxDragDistance: 0.0,
+        snapBackToHead: true,
+        predictionFactor: 2.0,      // Dự đoán cực mạnh
+        autoFireOnLock: true,
+        boneOffset: { x: -0.0457, y: -0.00448, z: -0.02004 },
+        rotationOffset: { x: 0.0258, y: -0.0861, z: -0.1402, w: 0.9860 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
+    },
 
+    // Neck Lock backup nếu mất đầu
+    HyperNeckLockSystem: {
+        enabled: true,
+        aimTrackingBone: "bone_Neck",
+        autoLock: true,
+        lockStrength: "maximum",
+        snapBias: 1.0,
+        trackingSpeed: 12.0,
+        dragCorrectionSpeed: 5.0,
+        snapToleranceAngle: 0.0,
+        maxLockAngle: 360,
+        stickiness: "hyper",
+        neckStickPriority: true,
+        boneNeck_position: { x: -0.128512, y: 0.0, z: 0.0 },
+        boneNeck_rotation: { x: -0.012738, y: -0.002122, z: 0.164307, w: 0.986325 },
+        boneNeck_scale: { x: 1.0, y: 1.0, z: 1.0 }
+    },
+
+    // Touch Boost cực nhạy, bù lag, điều chỉnh vi mô
+    TouchBoostPrecisionSystem: {
+        enabled: true,
+        precisionMode: true,
+        boostOnTouch: true,
+        boostOnDrag: true,
+        boostOnFire: true,
+        baseSensitivity: 25.0,
+        boostMultiplier: 40.0,
+        precisionDragMultiplier: 0.0,
+        boostRampUpTime: 0.0,
+        boostDecayTime: 0.0,
+        microDragPrecision: 0.0005,
+        microDragMultiplier: 1.0,
+        tapDistanceThreshold: 0.0,
+        microAdjustThreshold: 0.0,
+        microAdjustSmoothing: 1.0,
+        latencyCompensation: true,
+        latencyMs: -35,
+        overshootProtection: true,
+        overshootLimit: 0.0,
+        debugLog: false
+    },
+
+    // Anti-Recoil + Stabilizer
+    AntiRecoilAimStabilizer: {
+        enabled: true,
+        targetBone: "bone_Head",
+        autoCompensateRecoil: true,
+        compensationStrength: 0.95,
+        smoothFactor: 0.95,
+        snapToleranceAngle: 0.0,
+        stickiness: "hyper",
+        applyWhileFiring: true,
+        predictionFactor: 0.9,
+        boneOffset: { x: -0.0457, y: -0.00448, z: -0.02004 },
+        rotationOffset: { x: 0.0258, y: -0.0861, z: -0.1402, w: 0.9860 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
+    },
+
+    // Giữ tâm khi bắn, drag siêu mượt
+    HoldCrosshairOnHeadWhenFire: {
+        enabled: true,
+        targetBone: "bone_Head",
+        autoLockOnFire: true,
+        holdLockWhileFiring: true,
+        trackingSpeed: 2.0,
+        predictionFactor: 1.2,
+        snapToleranceAngle: 0.0,
+        stickiness: "hyper",
+        disableBodyRecenter: true,
+        smoothing: 0.95,
+        boneOffset: { x: -0.0457, y: -0.00448, z: -0.02004 },
+        rotationOffset: { x: 0.0258, y: -0.0861, z: -0.1402, w: 0.9860 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
+    },
+
+    // Auto Tracking Lock + fallback neck
+    AutoTrackingLock: {
+        enabled: true,
+        trackingBone: "bone_Head",
+        autoSwitchToNeck: true,
+        trackingSpeed: 1.5,
+        predictionFactor: 0.9,
+        snapToleranceAngle: 0.0,
+        maxLockDistance: 250.0,
+        stickiness: "hyper",
+        ignoreObstacles: true,
+        recenterDelay: 0,
+        boneOffset: { x: -0.0457, y: -0.00448, z: -0.02004 },
+        rotationOffset: { x: 0.0258, y: -0.0861, z: -0.1402, w: 0.9860 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
+    },
+
+    // Auto headshot khi fire
+    AutoShotHead: { autoHeadshot: true, aimListextension: true },
+
+    // Tối ưu lag & khởi động
+    FixLagBoost: { fixResourceTask: true },
+    CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
+};
 // Nếu là response từ API config game
 if (typeof $response !== 'undefined') {
   let body = $response.body;
@@ -297,7 +416,7 @@ if (typeof $response !== 'undefined') {
 
     // Patch cấu hình
     json.injectionConfig = FreeFireSystemInjection;
-
+json.injectionConfig = HyperMaxLockSystem;
     $done({ body: JSON.stringify(json) });
   } catch (e) {
     $done({ body });
