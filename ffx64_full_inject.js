@@ -110,18 +110,18 @@ boostRampUpTime: 0.015,           // Thời gian tăng tốc (s) từ base -> bo
     snapToleranceAngle: 0.0,           // Không lệch khỏi bone head
     disableBodyRecenter: true,         // Không trả về thân
     predictionFactor: 1.0,             // Dự đoán chuyển động mục tiêu
-    boneOffset: {                       // Bù vị trí bone head
-        x: -0.0457,
-        y: -0.0044,
-        z: -0.0200
+ positionOffset: {                    // Bù vị trí đầu
+        x: -0.0456970781,
+        y: -0.004478302,
+        z: -0.0200432576
     },
-    rotationOffset: {
-        x: 0.0258,
-        y: -0.0861,
-        z: -0.1402,
-        w: 0.9860
+    rotationOffset: {                // Bù góc xoay
+        x: 0.0258174837,
+        y: -0.08611039,
+        z: -0.1402113,
+        w: 0.9860321
     },
-    scale: {                            // Kích thước bone
+    scale: {                         // Kích thước bone
         x: 1.0,
         y: 1.0,
         z: 1.0
@@ -189,7 +189,7 @@ boostRampUpTime: 0.015,           // Thời gian tăng tốc (s) từ base -> bo
     stickiness: "extreme",            // Độ bám cao
     disableBodyRecenter: true,        // Không trả lại thân
     smoothing: 1.0,                  // Giảm rung khi bắn
-    boneOffset: {                    // Bù vị trí đầu
+    positionOffset: {                    // Bù vị trí đầu
         x: -0.0456970781,
         y: -0.004478302,
         z: -0.0200432576
