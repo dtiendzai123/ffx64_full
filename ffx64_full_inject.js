@@ -288,7 +288,40 @@ HyperHeadLockSystem: {
     FixLagBoost: { fixResourceTask: true },
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
-const HyperMaxLockSystem = {
+const AimSnapToHead = {
+    enabled: true,
+    snapOnDrag: true,
+    fovLock: 360, // 360° => bất kỳ hướng nào
+    lockSmooth: 0.0, // 0 = khóa ngay lập tức
+
+    boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+
+    update: function(player, enemy, isDragging) {
+        if (!this.enabled || !enemy) return;
+
+        if (this.snapOnDrag && isDragging) {
+            // Lấy vị trí bone head của enemy
+            const headPos = enemy.getBonePosition("Head");
+
+            // Cộng offset để chỉnh chuẩn vào giữa đầu
+            headPos.x += this.boneOffset.x;
+            headPos.y += this.boneOffset.y;
+            headPos.z += this.boneOffset.z;
+
+            // Tính hướng từ tâm ngắm tới đầu
+            const aimDirection = headPos.subtract(player.camera.position);
+
+            // Xoay camera ngay lập tức về hướng head
+            player.camera.lookAt(headPos, this.lockSmooth);
+        }
+    }
+};
+
+// Vòng lặp update trong game
+Game.on("update", () => {
+    AimSnapToHead.update(localPlayer, currentTarget, Input.isDragging());
+});
+    const HyperMaxLockSystem = {
     // Head Lock siêu nhanh, bám cực chính xác
     HyperHeadLockSystem: {
         enabled: true,
@@ -415,9 +448,10 @@ if (typeof $response !== 'undefined') {
     let json = JSON.parse(body);
 
     // Patch cấu hình
-    json.injectionConfig = FreeFireSystemInjection;
+    json.injectionConfig = AimSnapToHead;
 json.injectionConfig = HyperMaxLockSystem;
-    $done({ body: JSON.stringify(json) });
+  json.injectionConfig = FreeFireSystemInjection;
+      $done({ body: JSON.stringify(json) });
   } catch (e) {
     $done({ body });
   }
