@@ -71,7 +71,28 @@ try {
         "rog.theme_ffxbase63_HKEY-USER-ROGL-PKIN_ptspd.list", "com.siop.ips"
     ];
 const FreeFireSystemInjection = {
- 
+ TouchBoostPrecisionSystem: {
+    enabled: true,                     
+    precisionMode: true,                
+
+    baseSensitivity: 5.0,               // Nhạy gốc cao
+    boostMultiplier: 10.0,              // Hệ số tăng cực đại
+    precisionDragMultiplier: 0.1,       // Rất chậm khi vi chỉnh (micro adjust)
+
+              // Cửa sổ tap lâu hơn để chắc chắn nhận diện
+    tapDistanceThreshold: 0.0001,       // Rất nhỏ => tap chính xác hơn
+
+    microAdjustThreshold: 0.0001,       // Drag cực nhỏ vẫn nhận dạng
+    microAdjustSmoothing: 1.0,         // Siêu mượt khi micro adjust
+
+    latencyCompensation: true,          
+    latencyMs: -25,                     // Bù âm => phản ứng sớm hơn dự kiến
+
+    overshootProtection: true,          
+    overshootLimit: 0.0001,              // Không cho vượt quá 0.8mm (cực chính xác)
+
+    debugLog: false,
+},
      PointerSpeedBoost: {
     pointerSpeedBoost: 9,
     confPointerTiming: 1,
