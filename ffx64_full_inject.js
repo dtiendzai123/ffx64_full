@@ -74,11 +74,17 @@ const FreeFireSystemInjection = {
  TouchBoostPrecisionSystem: {
     enabled: true,                     
     precisionMode: true,                
-
+boostOnTouch: true,               // Chỉ kích hoạt khi có thao tác chạm
+    boostOnDrag: true,                // Kích hoạt khi kéo/drag
+    boostOnFire: false,
     baseSensitivity: 5.0,               // Nhạy gốc cao
     boostMultiplier: 10.0,              // Hệ số tăng cực đại
     precisionDragMultiplier: 0.1,       // Rất chậm khi vi chỉnh (micro adjust)
+boostRampUpTime: 0.015,           // Thời gian tăng tốc (s) từ base -> boost
+    boostDecayTime: 0.02,             // Thời gian giảm tốc từ boost -> base
 
+    microDragPrecision: 0.002,        // Ngưỡng drag nhỏ (m) để tinh chỉnh siêu mượt
+    microDragMultiplier: 0.65,        // Giảm tốc khi drag rất nhỏ để tăng độ chính xác
               // Cửa sổ tap lâu hơn để chắc chắn nhận diện
     tapDistanceThreshold: 0.0001,       // Rất nhỏ => tap chính xác hơn
 
@@ -93,7 +99,35 @@ const FreeFireSystemInjection = {
 
     debugLog: false,
 },
-     PointerSpeedBoost: {
+    InstantDragToBoneHead: {
+    enabled: true,                     // Bật chức năng
+    targetBone: "bone_Head",           // Luôn snap vào đầu
+    snapOnDragStart: true,             // Vuốt là snap ngay
+    holdLockWhileDragging: true,       // Giữ lock khi kéo
+    maxSnapDistance: 0.02,             // Giới hạn khoảng cách snap (m)
+    trackingSpeed: 2.0,                // Tốc độ bám theo cực nhanh
+    smoothing: 0.95,                   // Mượt khi snap
+    snapToleranceAngle: 0.0,           // Không lệch khỏi bone head
+    disableBodyRecenter: true,         // Không trả về thân
+    predictionFactor: 1.0,             // Dự đoán chuyển động mục tiêu
+    boneOffset: {                       // Bù vị trí bone head
+        x: -0.0457,
+        y: -0.0044,
+        z: -0.0200
+    },
+    rotationOffset: {
+        x: 0.0258,
+        y: -0.0861,
+        z: -0.1402,
+        w: 0.9860
+    },
+    scale: {                            // Kích thước bone
+        x: 1.0,
+        y: 1.0,
+        z: 1.0
+    }
+},
+    PointerSpeedBoost: {
     pointerSpeedBoost: 9,
     confPointerTiming: 1,
     selectPointerSpeedRoot9: 1
