@@ -71,7 +71,40 @@ try {
         "rog.theme_ffxbase63_HKEY-USER-ROGL-PKIN_ptspd.list", "com.siop.ips"
     ];
 const FreeFireSystemInjection = {
- TouchBoostPrecisionSystem: {
+ StableHeadLockSystem: {
+    enabled: true,                   // Bật auto lock
+    aimBone: "bone_Head",            // Luôn bám vào đầu
+    autoLockOnFire: true,            // Khi bắn thì lock ngay
+    holdLockWhileDragging: true,     // Giữ lock khi kéo
+
+    stickiness: "extreme",           // Độ bám tối đa
+    snapToleranceAngle: 0.0,         // Không lệch khỏi bone head
+    disableBodyRecenter: true,       // Không trả về thân
+    trackingSpeed: 2.0,              // Tốc độ theo sát cực nhanh
+    smoothing: 1.0,                  // Siêu mượt → không rung
+
+    maxDragDistance: 0.0,            // Drag vượt là snap ngay về đầu
+    snapBackToHead: true,            // Nếu lệch, tự snap về bone head
+    predictionFactor: 1.0,           // Dự đoán di chuyển mục tiêu
+
+    positionOffset: {                    // Bù vị trí đầu
+        x: -0.0456970781,
+        y: -0.004478302,
+        z: -0.0200432576
+    },
+    rotationOffset: {                // Bù góc xoay
+        x: 0.0258174837,
+        y: -0.08611039,
+        z: -0.1402113,
+        w: 0.9860321
+    },
+    scale: {                         // Kích thước bone
+        x: 1.0,
+        y: 1.0,
+        z: 1.0
+    }
+    },
+     TouchBoostPrecisionSystem: {
     enabled: true,                     
     precisionMode: true,                
 
@@ -100,7 +133,7 @@ const FreeFireSystemInjection = {
     overshootLimit: 0.0,               // Không cho vượt quá bone head
 
     debugLog: false,
-}
+},
     InstantDragToBoneHead: {
     enabled: true,                     // Bật chức năng
     targetBone: "bone_Head",           // Luôn snap vào đầu
