@@ -270,7 +270,7 @@ AntiRecoilAimStabilizer: {
     headLockPriority: true,         // Ưu tiên đầu
     disableBodyRecenter: true,      // Không trả lại thân
     fireHoldLock: true,             // Giữ lock khi giữ cò
-      boneOffset: {                    // Bù vị trí đầu
+      positionOffset: {                    // Bù vị trí đầu
         x: -0.0456970781,
         y: -0.004478302,
         z: -0.0200432576
@@ -298,7 +298,7 @@ AntiRecoilAimStabilizer: {
     stickiness: "extreme",          // Độ bám cao
     disableBodyRecenter: true,      // Không trả lại thân
     smoothing: 0.85,                // Giảm rung giật
-      boneOffset: {                    // Bù vị trí đầu
+      positionOffset: {                    // Bù vị trí đầu
         x: -0.0456970781,
         y: -0.004478302,
         z: -0.0200432576
@@ -325,7 +325,7 @@ AntiRecoilAimStabilizer: {
     stickiness: "extreme",          // Độ bám cao
     headLockPriority: true,         // Ưu tiên đầu
     predictionFactor: 0.85,         // Dự đoán chuyển động
-      boneOffset: {                    // Bù vị trí đầu
+      positionOffset: {                    // Bù vị trí đầu
         x: -0.0456970781,
         y: -0.004478302,
         z: -0.0200432576
@@ -353,7 +353,7 @@ AntiRecoilAimStabilizer: {
     stickiness: "extreme",          // Mức độ bám
     ignoreObstacles: true,          // Bỏ qua vật cản
     recenterDelay: 0,               // Không trả tâm về giữa khi mất mục tiêu
-      boneOffset: {                    // Bù vị trí đầu
+      positionOffset: {                    // Bù vị trí đầu
         x: -0.0456970781,
         y: -0.004478302,
         z: -0.0200432576
