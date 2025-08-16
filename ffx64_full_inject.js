@@ -291,7 +291,7 @@ HyperHeadLockSystem: {
 const HeadLockClamp = {
     enabled: true,
     targetBone: "Head",
-    maxYOffset: 0.02,   // Giới hạn lệch lên trên đầu (mét) - càng nhỏ càng khít
+    maxYOffset: 0.0,   // Giới hạn lệch lên trên đầu (mét) - càng nhỏ càng khít
 
     clampAim: function(player, enemy) {
         if (!this.enabled || !enemy || !enemy.isAlive) return;
