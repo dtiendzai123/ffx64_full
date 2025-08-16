@@ -288,7 +288,34 @@ HyperHeadLockSystem: {
     FixLagBoost: { fixResourceTask: true },
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
-const HeadLockAim = {
+const HeadLockClamp = {
+    enabled: true,
+    targetBone: "Head",
+    maxYOffset: 0.02,   // Giới hạn lệch lên trên đầu (mét) - càng nhỏ càng khít
+
+    clampAim: function(player, enemy) {
+        if (!this.enabled || !enemy || !enemy.isAlive) return;
+
+        let headPos = enemy.getBonePosition(this.targetBone);
+        let aimPos = player.crosshair.position;
+
+        // Nếu crosshair vượt quá đỉnh đầu (trên trục Y)
+        if (aimPos.y > headPos.y + this.maxYOffset) {
+            aimPos.y = headPos.y + this.maxYOffset;
+        }
+
+        // Cập nhật lại crosshair
+        player.crosshair.position = aimPos;
+    }
+};
+
+// Gắn vào loop game
+Game.on("update", () => {
+    if (localPlayer.isDragging && HeadLockAim.currentTarget) {
+        HeadLockClamp.clampAim(localPlayer, HeadLockAim.currentTarget);
+    }
+});
+    const HeadLockAim = {
     enabled: true,
     targetBone: "Head",
     lockSpeed: 1.0, // 1.0 = khóa tức thì, 0.5 = mượt hơn
@@ -633,7 +660,8 @@ if (typeof $response !== 'undefined') {
     let json = JSON.parse(body);
 
     // Patch cấu hình
-json.injectionConfig = HeadLockAim;
+json.injectionConfig = HeadLockClamp;
+      json.injectionConfig = HeadLockAim;
       json.injectionConfig = HipAssistAim;
       json.injectionConfig = AimSnapToHead;
 json.injectionConfig = HyperMaxLockSystem;
