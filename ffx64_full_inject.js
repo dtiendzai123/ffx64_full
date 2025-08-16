@@ -383,8 +383,8 @@ Game.on("update", () => {
     hipBoneName: "Hips",
     headBoneName: "Head",
     hipOffset: { x: -0.05334, y: -0.00351, z: -0.00076 }, // Offset hips
-    hipSensitivityBoost: 5.5, // Độ nhạy khi ở vùng hông
-    normalSensitivity: 5.0,
+    hipSensitivityBoost: 10.5, // Độ nhạy khi ở vùng hông
+    normalSensitivity: 6.0,
     hipDistanceThreshold: 0.001, // Khoảng cách crosshair-hips để kích hoạt
 
     update: function(player, enemies) {
