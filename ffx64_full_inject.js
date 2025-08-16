@@ -297,27 +297,48 @@ const SmartBoneAutoHeadLock = {
         "bone_Hips"
     ],
     headBone: "bone_Head",
-    lockTolerance: 0.03,   // vùng hút
-    maxYOffset: 0.0,     // giới hạn lệch Y tối đa (không lố đầu)
+    lockTolerance: 0.03,       // vùng hút cơ bản
+    maxYOffset: 0.0,         // không lố đầu
+    maxRotationDiff: 0.08,     // giới hạn sai lệch góc quay
+    maxOffsetDiff: 0.02,       // giới hạn sai lệch offset
 
     checkAndLock: function(player, enemy) {
         if (!this.enabled || !enemy || !enemy.isAlive) return;
 
         let aimPos = player.crosshair.position;
         let headPos = enemy.getBonePosition(this.headBone);
+        let headData = enemy.getBoneData(this.headBone); // {position, rotation}
 
         for (let bone of this.triggerBones) {
             let bonePos = enemy.getBonePosition(bone);
+            let boneData = enemy.getBoneData(bone); // {position, rotation}
+
+            // So sánh độ lệch position (offset)
+            let offsetDiff = Math.sqrt(
+                Math.pow(bonePos.x - headPos.x, 2) +
+                Math.pow(bonePos.y - headPos.y, 2) +
+                Math.pow(bonePos.z - headPos.z, 2)
+            );
+
+            // So sánh độ lệch rotation (góc xoay quaternion)
+            let dot =
+                headData.rotation.x * boneData.rotation.x +
+                headData.rotation.y * boneData.rotation.y +
+                headData.rotation.z * boneData.rotation.z +
+                headData.rotation.w * boneData.rotation.w;
+            let rotationDiff = 1 - Math.abs(dot); // 0 = trùng, càng lớn càng lệch
 
             let dx = Math.abs(aimPos.x - bonePos.x);
             let dy = Math.abs(aimPos.y - bonePos.y);
 
-            if (dx < this.lockTolerance && dy < this.lockTolerance) {
-                // Bù trừ giới hạn Y (không cho vượt đỉnh đầu)
-                let clampedY = Math.min(
-                    headPos.y,
-                    aimPos.y + this.maxYOffset
-                );
+            if (
+                dx < this.lockTolerance &&
+                dy < this.lockTolerance &&
+                offsetDiff < this.maxOffsetDiff &&
+                rotationDiff < this.maxRotationDiff
+            ) {
+                // Bù giới hạn Y
+                let clampedY = Math.min(headPos.y, aimPos.y + this.maxYOffset);
 
                 player.crosshair.position = {
                     x: headPos.x,
@@ -332,7 +353,7 @@ const SmartBoneAutoHeadLock = {
     }
 };
 
-// chạy trong loop
+// vòng lặp
 Game.on("update", () => {
     if (localPlayer.isDragging && SmartBoneAutoHeadLock.enabled) {
         SmartBoneAutoHeadLock.checkAndLock(localPlayer, HeadLockAim.currentTarget);
