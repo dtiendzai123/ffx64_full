@@ -297,10 +297,10 @@ const SmartBoneAutoHeadLock = {
         "bone_Hips"
     ],
     headBone: "bone_Head",
-    lockTolerance: 0.03,       // vùng hút cơ bản
+    lockTolerance: 0.01,       // vùng hút cơ bản
     maxYOffset: 0.0,         // không lố đầu
-    maxRotationDiff: 0.08,     // giới hạn sai lệch góc quay
-    maxOffsetDiff: 0.02,       // giới hạn sai lệch offset
+    maxRotationDiff: 0.01,   // càng nhỏ càng "nghiêm ngặt", 0.01 ~ gần như trùng head
+maxOffsetDiff: 0.005,    // offset gần như dính hẳn vào đầu
 
     checkAndLock: function(player, enemy) {
         if (!this.enabled || !enemy || !enemy.isAlive) return;
