@@ -293,7 +293,7 @@ const SmartBoneAutoHeadLock = {
     triggerBones: [
         "bone_LeftClav",
         "bone_RightClav",
-        "bone_Neck",
+      
         "bone_Hips"
     ],
     headBone: "bone_Head",
