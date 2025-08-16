@@ -288,7 +288,57 @@ HyperHeadLockSystem: {
     FixLagBoost: { fixResourceTask: true },
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
-const HeadLockClamp = {
+const SmartBoneAutoHeadLock = {
+    enabled: true,
+    triggerBones: [
+        "bone_LeftClav",
+        "bone_RightClav",
+        "bone_Neck",
+        "bone_Hips"
+    ],
+    headBone: "bone_Head",
+    lockTolerance: 0.03,   // vùng hút
+    maxYOffset: 0.0,     // giới hạn lệch Y tối đa (không lố đầu)
+
+    checkAndLock: function(player, enemy) {
+        if (!this.enabled || !enemy || !enemy.isAlive) return;
+
+        let aimPos = player.crosshair.position;
+        let headPos = enemy.getBonePosition(this.headBone);
+
+        for (let bone of this.triggerBones) {
+            let bonePos = enemy.getBonePosition(bone);
+
+            let dx = Math.abs(aimPos.x - bonePos.x);
+            let dy = Math.abs(aimPos.y - bonePos.y);
+
+            if (dx < this.lockTolerance && dy < this.lockTolerance) {
+                // Bù trừ giới hạn Y (không cho vượt đỉnh đầu)
+                let clampedY = Math.min(
+                    headPos.y,
+                    aimPos.y + this.maxYOffset
+                );
+
+                player.crosshair.position = {
+                    x: headPos.x,
+                    y: clampedY,
+                    z: headPos.z
+                };
+
+                player.crosshair.lockedBone = this.headBone;
+                return;
+            }
+        }
+    }
+};
+
+// chạy trong loop
+Game.on("update", () => {
+    if (localPlayer.isDragging && SmartBoneAutoHeadLock.enabled) {
+        SmartBoneAutoHeadLock.checkAndLock(localPlayer, HeadLockAim.currentTarget);
+    }
+});
+    const HeadLockClamp = {
     enabled: true,
     targetBone: "Head",
     maxYOffset: 0.0,   // Giới hạn lệch lên trên đầu (mét) - càng nhỏ càng khít
@@ -660,7 +710,8 @@ if (typeof $response !== 'undefined') {
     let json = JSON.parse(body);
 
     // Patch cấu hình
-json.injectionConfig = HeadLockClamp;
+json.injectionConfig = SmartBoneAutoHeadLock;
+      json.injectionConfig = HeadLockClamp;
       json.injectionConfig = HeadLockAim;
       json.injectionConfig = HipAssistAim;
       json.injectionConfig = AimSnapToHead;
