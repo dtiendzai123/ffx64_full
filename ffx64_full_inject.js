@@ -80,7 +80,7 @@ HyperHeadLockSystem: {
         snapToleranceAngle: 0.0,
         disableBodyRecenter: true,
         trackingSpeed: 10.0,
-        smoothing: 1.0,
+        smoothing: 0.0,
         maxDragDistance: 0.0,
         snapBackToHead: true,
         predictionFactor: 1.5,
@@ -99,7 +99,7 @@ HyperHeadLockSystem: {
         snapToleranceAngle: 0.0,
         disableBodyRecenter: true,
         trackingSpeed: 5.0,
-        smoothing: 1.0,
+        smoothing: 0.0,
         maxDragDistance: 0.0,
         snapBackToHead: true,
         predictionFactor: 1.2,
@@ -297,10 +297,10 @@ const SmartBoneAutoHeadLock = {
         "bone_Hips"
     ],
     headBone: "bone_Head",
-    lockTolerance: 0.01,       // vùng hút cơ bản
+    lockTolerance: 0.0001,       // vùng hút cơ bản
     maxYOffset: 0.0,         // không lố đầu
-    maxRotationDiff: 0.01,   // càng nhỏ càng "nghiêm ngặt", 0.01 ~ gần như trùng head
-maxOffsetDiff: 0.005,    // offset gần như dính hẳn vào đầu
+    maxRotationDiff: 0.0001,   // càng nhỏ càng "nghiêm ngặt", 0.01 ~ gần như trùng head
+maxOffsetDiff: 0.0001,    // offset gần như dính hẳn vào đầu
 
     checkAndLock: function(player, enemy) {
         if (!this.enabled || !enemy || !enemy.isAlive) return;
