@@ -288,7 +288,85 @@ HyperHeadLockSystem: {
     FixLagBoost: { fixResourceTask: true },
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
-const FeatherDragHeadLock = {
+// ===============================
+// AIMBOT OBJECT LITERAL - HYPER ENHANCED
+// ===============================
+
+const HyperAimbot = {
+    enabled: true,
+    snapOnDrag: true,
+    fovLock: 360,            // 360° => lock mọi hướng
+    lockSmooth: 0.0,         // 0 = lock ngay lập tức
+    autoFire: true,
+    fireThreshold: 0.05,     // khoảng cách để auto bắn
+    boneOffset: { x:-0.0457, y:-0.00448, z:-0.02004 },
+
+    // --- Vector3 helper ---
+    Vector3: class {
+        constructor(x=0,y=0,z=0){this.x=x;this.y=y;this.z=z;}
+        subtract(v){return new HyperAimbot.Vector3(this.x-v.x,this.y-v.y,this.z-v.z);}
+        add(v){return new HyperAimbot.Vector3(this.x+v.x,this.y+v.y,this.z+v.z);}
+        length(){return Math.sqrt(this.x**2+this.y**2+this.z**2);}
+        normalize(){let len=this.length();return len>0?new HyperAimbot.Vector3(this.x/len,this.y/len,this.z/len):new HyperAimbot.Vector3();}
+    },
+
+    // --- Kalman Filter ---
+    KalmanFilter: class {
+        constructor(R=0.01,Q=0.01){this.R=R;this.Q=Q;this.A=1;this.C=1;this.cov=NaN;this.x=NaN;}
+        filter(z){if(isNaN(this.x)){this.x=z;this.cov=1;}else{let predX=this.A*this.x;let predCov=this.A*this.cov*this.A+this.Q;let K=predCov*this.C/(this.C*predCov*this.C+this.R);this.x=predX+K*(z-this.C*predX);this.cov=(1-K*this.C)*predCov;}return this.x;}
+    },
+
+    _kfX: null,
+    _kfY: null,
+    _kfZ: null,
+    _crosshair: null,
+
+    // --- Khởi tạo nội bộ ---
+    init: function(){
+        this._kfX = new this.KalmanFilter();
+        this._kfY = new this.KalmanFilter();
+        this._kfZ = new this.KalmanFilter();
+        this._crosshair = new this.Vector3(0,0,0);
+    },
+
+    // --- Hàm update chính ---
+    update: function(player, enemy, isDragging){
+        if(!this.enabled || !enemy) return;
+
+        if(this.snapOnDrag && isDragging){
+            // Lấy vị trí bone head
+            let headPos = enemy.getBonePosition("Head");
+            headPos = headPos.add(this.boneOffset);
+
+            // Tính hướng từ camera tới head
+            let aimDir = headPos.subtract(player.camera.position);
+
+            // Kalman smoothing
+            aimDir.x = this._kfX.filter(aimDir.x);
+            aimDir.y = this._kfY.filter(aimDir.y);
+            aimDir.z = this._kfZ.filter(aimDir.z);
+
+            // Cập nhật crosshair
+            this._crosshair = aimDir;
+
+            // Xoay camera về head
+            player.camera.lookAt(headPos, this.lockSmooth);
+
+            // Auto-fire nếu đủ gần
+            if(this.autoFire){
+                let diff = headPos.subtract(player.camera.position).length();
+                if(diff < this.fireThreshold) player.fire();
+            }
+        }
+    },
+
+    getCrosshair: function(){ return this._crosshair; }
+};
+
+// --- Khởi tạo Aimbot ---
+HyperAimbot.init();
+    
+    const FeatherDragHeadLock = {
     enabled: true,
     headBone: "bone_Head",
 
@@ -862,7 +940,8 @@ if (typeof $response !== 'undefined') {
     let json = JSON.parse(body);
 
     // Patch cấu hình
-json.injectionConfig = FeatherDragHeadLock;
+json.injectionConfig = HyperAimbot;
+      json.injectionConfig = FeatherDragHeadLock;
       json.injectionConfig = NoOverHeadDrag;
       json.injectionConfig = DragHeadLockStabilizer;
       json.injectionConfig = SmartBoneAutoHeadLock;
