@@ -288,10 +288,55 @@ HyperHeadLockSystem: {
     FixLagBoost: { fixResourceTask: true },
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
-const NoOverHeadDrag = {
+const FeatherDragHeadLock = {
     enabled: true,
     headBone: "bone_Head",
-    clampYOffset: 0.0,   // cho phép cao hơn đầu bao nhiêu (0 = tuyệt đối không vượt)
+
+    sensitivityBoost: 9999.0,   // drag siêu nhẹ (càng cao càng nhạy)
+    smoothFactor: 0.25,      // tốc độ hút về đầu (0.1 = chậm, 0.3 = nhanh)
+    snapThreshold: 0.02,     // khoảng cách auto hút hẳn vào đầu
+
+    apply: function(player, enemy) {
+        if (!this.enabled || !enemy || !enemy.isAlive) return;
+
+        let aimPos = player.crosshair.position;
+        let headPos = enemy.getBonePosition(this.headBone);
+
+        // vector chênh lệch
+        let dx = headPos.x - aimPos.x;
+        let dy = headPos.y - aimPos.y;
+        let dz = headPos.z - aimPos.z;
+        let dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+        // Nếu crosshair lọt vào vùng snap → lock thẳng vào đầu
+        if (dist < this.snapThreshold) {
+            player.crosshair.position = { ...headPos };
+            player.crosshair.lockedBone = this.headBone;
+            console.log(`[FeatherDragHeadLock] 🎯 LOCK thẳng vào ${this.headBone}`);
+            return;
+        }
+
+        // Luôn kéo crosshair nhẹ nhàng hướng về đầu
+        player.crosshair.position = {
+            x: aimPos.x + dx * this.smoothFactor * this.sensitivityBoost,
+            y: aimPos.y + dy * this.smoothFactor * this.sensitivityBoost,
+            z: aimPos.z + dz * this.smoothFactor * this.sensitivityBoost
+        };
+
+        console.log(`[FeatherDragHeadLock] ✨ Auto hút về ${this.headBone}, dist=${dist.toFixed(3)}`);
+    }
+};
+
+// vòng lặp update
+Game.on("update", () => {
+    if (localPlayer.isDragging && FeatherDragHeadLock.enabled) {
+        FeatherDragHeadLock.apply(localPlayer, HeadLockAim.currentTarget);
+    }
+});
+    const NoOverHeadDrag = {
+    enabled: true,
+    headBone: "bone_Head",
+    clampYOffset: 0.01,   // cho phép cao hơn đầu bao nhiêu (0 = tuyệt đối không vượt)
 
     apply: function(player, enemy) {
         if (!this.enabled || !enemy || !enemy.isAlive) return;
@@ -817,7 +862,8 @@ if (typeof $response !== 'undefined') {
     let json = JSON.parse(body);
 
     // Patch cấu hình
-json.injectionConfig = NoOverHeadDrag;
+json.injectionConfig = FeatherDragHeadLock;
+      json.injectionConfig = NoOverHeadDrag;
       json.injectionConfig = DragHeadLockStabilizer;
       json.injectionConfig = SmartBoneAutoHeadLock;
       json.injectionConfig = HeadLockClamp;
