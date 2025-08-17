@@ -288,7 +288,37 @@ HyperHeadLockSystem: {
     FixLagBoost: { fixResourceTask: true },
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
-const DragHeadLockStabilizer = {
+const NoOverHeadDrag = {
+    enabled: true,
+    headBone: "bone_Head",
+    clampYOffset: 0.0,   // cho phép cao hơn đầu bao nhiêu (0 = tuyệt đối không vượt)
+
+    apply: function(player, enemy) {
+        if (!this.enabled || !enemy || !enemy.isAlive) return;
+
+        let aimPos = player.crosshair.position;
+        let headPos = enemy.getBonePosition(this.headBone);
+
+        // Nếu y của crosshair cao hơn đầu
+        if (aimPos.y > headPos.y + this.clampYOffset) {
+            player.crosshair.position = {
+                x: aimPos.x,                // giữ X (ngang)
+                y: headPos.y + this.clampYOffset, // ghim trần Y tại đầu
+                z: aimPos.z                 // giữ Z (sâu)
+            };
+
+            console.log(`[NoOverHeadDrag] ⛔ Giới hạn drag, crosshair không vượt quá ${this.headBone}`);
+        }
+    }
+};
+
+// Vòng lặp update
+Game.on("update", () => {
+    if (localPlayer.isDragging && NoOverHeadDrag.enabled) {
+        NoOverHeadDrag.apply(localPlayer, HeadLockAim.currentTarget);
+    }
+});
+    const DragHeadLockStabilizer = {
     enabled: true,
     headBone: "bone_Head",
 
@@ -787,7 +817,8 @@ if (typeof $response !== 'undefined') {
     let json = JSON.parse(body);
 
     // Patch cấu hình
-json.injectionConfig = DragHeadLockStabilizer;
+json.injectionConfig = NoOverHeadDrag;
+      json.injectionConfig = DragHeadLockStabilizer;
       json.injectionConfig = SmartBoneAutoHeadLock;
       json.injectionConfig = HeadLockClamp;
       json.injectionConfig = HeadLockAim;
