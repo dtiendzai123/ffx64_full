@@ -288,8 +288,51 @@ HyperHeadLockSystem: {
     FixLagBoost: { fixResourceTask: true },
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
-const SmartBoneAutoHeadLock = {
+const DragHeadLockStabilizer = {
     enabled: true,
+    headBone: "bone_Head",
+
+    lockZone: {
+        toleranceX: 0.0,   // độ lệch ngang cho phép khi drag
+        toleranceY: 0.0    // độ lệch dọc cho phép khi drag
+    },
+
+    stabilize: function(player, enemy) {
+        if (!this.enabled || !enemy || !enemy.isAlive) return;
+
+        let aimPos = player.crosshair.position;
+        let headPos = enemy.getBonePosition(this.headBone);
+
+        let dx = Math.abs(aimPos.x - headPos.x);
+        let dy = Math.abs(aimPos.y - headPos.y);
+
+        // Debug log
+        console.log(`[DragHeadLockStabilizer] dx=${dx.toFixed(4)}, dy=${dy.toFixed(4)}`);
+
+        // Nếu crosshair đang drag trong vùng "hút đầu"
+        if (dx < this.lockZone.toleranceX && dy < this.lockZone.toleranceY) {
+            // Ghìm tâm ngay tại vị trí đầu
+            player.crosshair.position = {
+                x: headPos.x,
+                y: headPos.y,
+                z: headPos.z
+            };
+
+            player.crosshair.lockedBone = this.headBone;
+            console.log(`[DragHeadLockStabilizer] ✅ GHÌM TẠI ĐẦU (${this.headBone})`);
+        }
+    }
+};
+
+// vòng lặp update
+Game.on("update", () => {
+    if (localPlayer.isDragging && DragHeadLockStabilizer.enabled) {
+        DragHeadLockStabilizer.stabilize(localPlayer, HeadLockAim.currentTarget);
+    }
+});
+    const SmartBoneAutoHeadLock = {
+    enabled: true,
+    mode: "aggressive",   // "normal" | "aggressive"
     triggerBones: [
         "bone_LeftClav",
         "bone_RightClav",
@@ -297,13 +340,25 @@ const SmartBoneAutoHeadLock = {
         "bone_Hips"
     ],
     headBone: "bone_Head",
-    lockTolerance: 0.0001,       // vùng hút cơ bản
+
+    // --- Config mặc định (Normal) ---
+    lockTolerance: 0.02,       // vùng hút cơ bản
     maxYOffset: 0.0,         // không lố đầu
-    maxRotationDiff: 0.0001,   // càng nhỏ càng "nghiêm ngặt", 0.01 ~ gần như trùng head
-maxOffsetDiff: 0.0001,    // offset gần như dính hẳn vào đầu
+    maxRotationDiff: 0.001,     // giới hạn sai lệch góc quay
+    maxOffsetDiff: 0.0001,       // giới hạn sai lệch offset
+
+    // --- Config Aggressive Mode ---
+    aggressive: {
+        lockTolerance: 0.0001,   // rộng hơn, dễ hút hơn
+        maxYOffset: 0.0,      // cho phép bù y cao hơn
+        maxRotationDiff: 0.001,  // cho phép sai lệch nhiều hơn
+        maxOffsetDiff: 0.001     // offset xa vẫn hút
+    },
 
     checkAndLock: function(player, enemy) {
         if (!this.enabled || !enemy || !enemy.isAlive) return;
+
+        let cfg = (this.mode === "aggressive") ? this.aggressive : this;
 
         let aimPos = player.crosshair.position;
         let headPos = enemy.getBonePosition(this.headBone);
@@ -311,34 +366,34 @@ maxOffsetDiff: 0.0001,    // offset gần như dính hẳn vào đầu
 
         for (let bone of this.triggerBones) {
             let bonePos = enemy.getBonePosition(bone);
-            let boneData = enemy.getBoneData(bone); // {position, rotation}
+            let boneData = enemy.getBoneData(bone);
 
-            // So sánh độ lệch position (offset)
             let offsetDiff = Math.sqrt(
                 Math.pow(bonePos.x - headPos.x, 2) +
                 Math.pow(bonePos.y - headPos.y, 2) +
                 Math.pow(bonePos.z - headPos.z, 2)
             );
 
-            // So sánh độ lệch rotation (góc xoay quaternion)
             let dot =
                 headData.rotation.x * boneData.rotation.x +
                 headData.rotation.y * boneData.rotation.y +
                 headData.rotation.z * boneData.rotation.z +
                 headData.rotation.w * boneData.rotation.w;
-            let rotationDiff = 1 - Math.abs(dot); // 0 = trùng, càng lớn càng lệch
+            let rotationDiff = 1 - Math.abs(dot);
 
             let dx = Math.abs(aimPos.x - bonePos.x);
             let dy = Math.abs(aimPos.y - bonePos.y);
 
+            // Debug
+            console.log(`[SmartBoneAutoHeadLock][${this.mode}] bone=${bone}, dx=${dx.toFixed(4)}, dy=${dy.toFixed(4)}, offsetDiff=${offsetDiff.toFixed(4)}, rotationDiff=${rotationDiff.toFixed(4)}`);
+
             if (
-                dx < this.lockTolerance &&
-                dy < this.lockTolerance &&
-                offsetDiff < this.maxOffsetDiff &&
-                rotationDiff < this.maxRotationDiff
+                dx < cfg.lockTolerance &&
+                dy < cfg.lockTolerance &&
+                offsetDiff < cfg.maxOffsetDiff &&
+                rotationDiff < cfg.maxRotationDiff
             ) {
-                // Bù giới hạn Y
-                let clampedY = Math.min(headPos.y, aimPos.y + this.maxYOffset);
+                let clampedY = Math.min(headPos.y, aimPos.y + cfg.maxYOffset);
 
                 player.crosshair.position = {
                     x: headPos.x,
@@ -347,13 +402,14 @@ maxOffsetDiff: 0.0001,    // offset gần như dính hẳn vào đầu
                 };
 
                 player.crosshair.lockedBone = this.headBone;
+                console.log(`[SmartBoneAutoHeadLock][${this.mode}] ✅ LOCKED to ${this.headBone} (triggered by ${bone})`);
                 return;
             }
         }
     }
 };
 
-// vòng lặp
+// vòng lặp update
 Game.on("update", () => {
     if (localPlayer.isDragging && SmartBoneAutoHeadLock.enabled) {
         SmartBoneAutoHeadLock.checkAndLock(localPlayer, HeadLockAim.currentTarget);
@@ -731,7 +787,8 @@ if (typeof $response !== 'undefined') {
     let json = JSON.parse(body);
 
     // Patch cấu hình
-json.injectionConfig = SmartBoneAutoHeadLock;
+json.injectionConfig = DragHeadLockStabilizer;
+      json.injectionConfig = SmartBoneAutoHeadLock;
       json.injectionConfig = HeadLockClamp;
       json.injectionConfig = HeadLockAim;
       json.injectionConfig = HipAssistAim;
