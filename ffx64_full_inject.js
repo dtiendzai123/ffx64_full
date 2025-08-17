@@ -292,9 +292,9 @@ const FeatherDragHeadLock = {
     enabled: true,
     headBone: "bone_Head",
 
-    sensitivityBoost: 9999.0,   // drag siêu nhẹ (càng cao càng nhạy)
-    smoothFactor: 0.25,      // tốc độ hút về đầu (0.1 = chậm, 0.3 = nhanh)
-    snapThreshold: 0.02,     // khoảng cách auto hút hẳn vào đầu
+    sensitivityBoost: 50.0,   // drag siêu nhẹ (càng cao càng nhạy)
+    smoothFactor: 0.3,      // tốc độ hút về đầu (0.1 = chậm, 0.3 = nhanh)
+    snapThreshold: 0.002,     // khoảng cách auto hút hẳn vào đầu
 
     apply: function(player, enemy) {
         if (!this.enabled || !enemy || !enemy.isAlive) return;
