@@ -299,7 +299,7 @@ const HyperAimbot = {
     lockSmooth: 0.0,         // 0 = lock ngay lập tức
     autoFire: true,
     fireThreshold: 0.05,     // khoảng cách để auto bắn
-    boneOffset: { x:-0.0457, y:-0.00448, z:-0.02004 },
+    boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
 
     // --- Vector3 helper ---
     Vector3: class {
@@ -373,7 +373,7 @@ HyperAimbot.init();
     sensitivityBoost: 50.0,   // drag siêu nhẹ (càng cao càng nhạy)
     smoothFactor: 0.3,      // tốc độ hút về đầu (0.1 = chậm, 0.3 = nhanh)
     snapThreshold: 0.002,     // khoảng cách auto hút hẳn vào đầu
-
+boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
     apply: function(player, enemy) {
         if (!this.enabled || !enemy || !enemy.isAlive) return;
 
@@ -415,7 +415,7 @@ Game.on("update", () => {
     enabled: true,
     headBone: "bone_Head",
     clampYOffset: 0.0,   // cho phép cao hơn đầu bao nhiêu (0 = tuyệt đối không vượt)
-
+boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
     apply: function(player, enemy) {
         if (!this.enabled || !enemy || !enemy.isAlive) return;
 
@@ -444,7 +444,7 @@ Game.on("update", () => {
     const DragHeadLockStabilizer = {
     enabled: true,
     headBone: "bone_Head",
-
+boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
     lockZone: {
         toleranceX: 0.0,   // độ lệch ngang cho phép khi drag
         toleranceY: 0.0    // độ lệch dọc cho phép khi drag
