@@ -300,6 +300,8 @@ const HyperAimbot = {
     autoFire: true,
     fireThreshold: 0.05,     // khoảng cách để auto bắn
     boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 },
 
     // --- Vector3 helper ---
     Vector3: class {
@@ -374,6 +376,8 @@ HyperAimbot.init();
     smoothFactor: 0.3,      // tốc độ hút về đầu (0.1 = chậm, 0.3 = nhanh)
     snapThreshold: 0.002,     // khoảng cách auto hút hẳn vào đầu
 boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 },
     apply: function(player, enemy) {
         if (!this.enabled || !enemy || !enemy.isAlive) return;
 
@@ -416,6 +420,8 @@ Game.on("update", () => {
     headBone: "bone_Head",
     clampYOffset: 0.0,   // cho phép cao hơn đầu bao nhiêu (0 = tuyệt đối không vượt)
 boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 },
     apply: function(player, enemy) {
         if (!this.enabled || !enemy || !enemy.isAlive) return;
 
@@ -445,6 +451,8 @@ Game.on("update", () => {
     enabled: true,
     headBone: "bone_Head",
 boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 },
     lockZone: {
         toleranceX: 0.0,   // độ lệch ngang cho phép khi drag
         toleranceY: 0.0    // độ lệch dọc cho phép khi drag
@@ -493,7 +501,9 @@ Game.on("update", () => {
         "bone_Hips"
     ],
     headBone: "bone_Head",
-
+boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 },
     // --- Config mặc định (Normal) ---
     lockTolerance: 0.02,       // vùng hút cơ bản
     maxYOffset: 0.0,         // không lố đầu
@@ -572,7 +582,9 @@ Game.on("update", () => {
     enabled: true,
     targetBone: "Head",
     maxYOffset: 0.0,   // Giới hạn lệch lên trên đầu (mét) - càng nhỏ càng khít
-
+boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 },
     clampAim: function(player, enemy) {
         if (!this.enabled || !enemy || !enemy.isAlive) return;
 
