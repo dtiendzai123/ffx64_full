@@ -336,7 +336,7 @@ Game.on("update", () => {
     const NoOverHeadDrag = {
     enabled: true,
     headBone: "bone_Head",
-    clampYOffset: 0.01,   // cho phép cao hơn đầu bao nhiêu (0 = tuyệt đối không vượt)
+    clampYOffset: 0.0,   // cho phép cao hơn đầu bao nhiêu (0 = tuyệt đối không vượt)
 
     apply: function(player, enemy) {
         if (!this.enabled || !enemy || !enemy.isAlive) return;
