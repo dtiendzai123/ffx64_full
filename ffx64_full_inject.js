@@ -289,7 +289,97 @@ HyperHeadLockSystem: {
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
 
+// =======================
+// AIMNECK CONFIG
+// =======================
+const AimNeckConfig = {
+  sensitivity: 9999.0,         // Độ nhạy di chuyển tâm
+  lockSpeed: 0.95,          // Tốc độ hút tâm (1 = tức thì)
+  prediction: true,         // Bật dự đoán vị trí cổ
+  tracking: true,           // Theo dõi liên tục
+  fov: 360,                 // Góc quét tìm mục tiêu
+  autoFire: false,          // Bắn tự động khi lock
+  aimBone: "bone_Neck",     // Vùng cổ mặc định
+  headAssist: true,         // Nếu kéo lên trên, auto hút vào đầu
+  screenTapEnabled: true,   // Điều khiển chạm màn hình
+  clamp: { minY: 0, maxY: 0 } // Giới hạn lock (không vượt quá đầu)
+}
 
+// =======================
+// AIMNECK CORE FUNCTIONS
+// =======================
+
+// 1. Phát hiện vị trí cổ
+function detectNeckTarget(enemies) {
+  return enemies.filter(e => e.isVisible && e.health > 0)
+                .map(e => ({ 
+                   enemy: e, 
+                   neckPos: getBonePosition(e, AimNeckConfig.aimBone) 
+                }))
+}
+
+// Giả lập lấy vị trí bone cổ từ nhân vật
+function getBonePosition(enemy, bone) {
+  return enemy.bones && enemy.bones[bone] ? enemy.bones[bone] : enemy.position
+}
+
+// 2. Prediction: dự đoán di chuyển cổ
+function predictNeckPosition(target) {
+  let velocity = target.enemy.velocity || {x:0,y:0,z:0}
+  return {
+    x: target.neckPos.x + velocity.x * 0.1,
+    y: target.neckPos.y + velocity.y * 0.1,
+    z: target.neckPos.z + velocity.z * 0.1
+  }
+}
+
+// 3. Tính toán hướng để nhắm cổ
+function calculateAimDirection(playerPos, targetPos) {
+  return {
+    x: targetPos.x - playerPos.x,
+    y: targetPos.y - playerPos.y,
+    z: targetPos.z - playerPos.z
+  }
+}
+
+// 4. Điều khiển drag/tap màn hình
+function screenTapTo(targetPos) {
+  if (AimNeckConfig.screenTapEnabled) {
+    console.log("Screen tap/drag tới:", targetPos)
+    // Ở mobile thực tế sẽ là API điều khiển cảm ứng
+  }
+}
+
+// 5. Aimneck Loop
+function aimNeckLoop(player, enemies) {
+  let targets = detectNeckTarget(enemies)
+  if (targets.length === 0) return
+
+  // Ưu tiên mục tiêu đầu tiên trong FOV
+  let target = targets[0]
+  let lockPos = AimNeckConfig.prediction ? predictNeckPosition(target) : target.neckPos
+  
+  // Tính hướng
+  let dir = calculateAimDirection(player.position, lockPos)
+
+  // Giới hạn: không vượt quá đầu
+  if (AimNeckConfig.headAssist) {
+    if (dir.y > AimNeckConfig.clamp.maxY) dir.y = AimNeckConfig.clamp.maxY
+    if (dir.y < AimNeckConfig.clamp.minY) dir.y = AimNeckConfig.minY
+  }
+
+  // Hút tâm vào cổ
+  applyAimLock(dir)
+
+  // Điều khiển màn hình
+  screenTapTo(lockPos)
+}
+
+// Áp dụng aimlock (dịch chuyển crosshair)
+function applyAimLock(direction) {
+  console.log("AimLock hướng tới:", direction)
+  // Trong mobile thực tế sẽ translate sang điều khiển cảm ứng / camera
+}
 
    
     const FeatherDragHeadLock = {
@@ -876,7 +966,7 @@ if (typeof $response !== 'undefined') {
     let json = JSON.parse(body);
 
     // Patch cấu hình
-
+json.injectionConfig = AimNeckConfig;
       json.injectionConfig = FeatherDragHeadLock;
       json.injectionConfig = NoOverHeadDrag;
       json.injectionConfig = DragHeadLockStabilizer;
