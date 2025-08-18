@@ -288,7 +288,105 @@ HyperHeadLockSystem: {
     FixLagBoost: { fixResourceTask: true },
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
+// ==========================
+// AIMLOCK SYSTEM (MOBILE)
+// ==========================
 
+// Cấu hình Aimlock
+const AimLockConfig = {
+  sensitivity: 9999.0,      // Độ nhạy kéo tâm
+  lockSpeed: 0.9,        // Tốc độ hút tâm (0 = chậm, 1 = tức thì)
+  prediction: true,      // Bật dự đoán chuyển động
+  tracking: true,        // Theo dõi liên tục
+  fov: 360,              // Góc nhìn để aim
+  autoFire: false,       // Tự động bắn khi lock trúng
+  priority: "nearest"    // nearest | lowestHP | first
+}
+
+// ==========================
+// 1. Phát hiện mục tiêu
+// ==========================
+function detectTarget(enemies, playerPos) {
+  return enemies
+    .filter(e => e.isVisible && e.health > 0)
+    .sort((a, b) => {
+      if (AimLockConfig.priority === "nearest") {
+        return distance(playerPos, a.position) - distance(playerPos, b.position)
+      } else if (AimLockConfig.priority === "lowestHP") {
+        return a.health - b.health
+      } else {
+        return 0
+      }
+    })
+}
+
+// ==========================
+// 2. Khóa mục tiêu (lock-on)
+// ==========================
+function lockTarget(target) {
+  if (!target) return
+  let pos = target.position
+  aimlockScreenTap(pos)   // di chuyển tâm ngắm tới vị trí target
+}
+
+// ==========================
+// 3. Cập nhật vị trí (tracking)
+// ==========================
+function updateTargetPosition(target) {
+  if (!target) return
+  let predicted = AimLockConfig.prediction ? predictPosition(target) : target.position
+  aimlockScreenTap(predicted)
+}
+
+// ==========================
+// 4. Prediction (dự đoán di chuyển)
+// ==========================
+function predictPosition(target) {
+  let velocity = target.velocity || {x:0,y:0,z:0}
+  return {
+    x: target.position.x + velocity.x * 0.1,
+    y: target.position.y + velocity.y * 0.1,
+    z: target.position.z + velocity.z * 0.1
+  }
+}
+
+// ==========================
+// 5. Điều khiển chạm màn hình
+// ==========================
+function aimlockScreenTap(screenPos) {
+  // Giả lập việc kéo tâm ngắm bằng cảm ứng
+  // Ở môi trường thực tế, thay bằng API tap/drag của engine
+  console.log("Moving crosshair to:", screenPos)
+}
+
+// ==========================
+// 6. Vòng lặp Aimlock
+// ==========================
+function aimlockLoop(enemies, player) {
+  let targets = detectTarget(enemies, player.position)
+  if (targets.length > 0) {
+    let mainTarget = targets[0]
+
+    // Khóa mục tiêu
+    lockTarget(mainTarget)
+
+    // Nếu tracking bật thì update liên tục
+    if (AimLockConfig.tracking) {
+      updateTargetPosition(mainTarget)
+    }
+  }
+}
+
+// ==========================
+// Helper: Tính khoảng cách
+// ==========================
+function distance(a, b) {
+  return Math.sqrt(
+    (a.x - b.x) ** 2 +
+    (a.y - b.y) ** 2 +
+    (a.z - b.z) ** 2
+  )
+}
 // =======================
 // AIMNECK CONFIG
 // =======================
@@ -966,7 +1064,8 @@ if (typeof $response !== 'undefined') {
     let json = JSON.parse(body);
 
     // Patch cấu hình
-json.injectionConfig = AimNeckConfig;
+json.injectionConfig = AimLockConfig;
+      json.injectionConfig = AimNeckConfig;
       json.injectionConfig = FeatherDragHeadLock;
       json.injectionConfig = NoOverHeadDrag;
       json.injectionConfig = DragHeadLockStabilizer;
