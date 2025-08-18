@@ -1058,71 +1058,47 @@ Game.on("update", () => {
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
 // Nếu là response từ API config game
-
-
-// ==========================
-// PATCH INJECTION CONFIG
-// ==========================
-
 if (typeof $response !== 'undefined') {
   let body = $response.body;
   try {
     let json = JSON.parse(body);
 
-    // Gán giá trị đặc biệt
-    const customValues = {
-        'com.act_conf_seclect_seclect_sync_setting"100"Key_acp_allow.file_code_unlock_connect_Dtps-setting_system_appdata&app_app_com.dts.freefireth_on_auto_cws': "70-100_on_uncrack.strings=true",
-        "com.accept_devices_Key_auto.setting": "70-100",
-        "com.act_ffxbase64_Key_adt_allow.list": "10",
-        "com.adt_xbaseff64_Key_act.list": "1440",
-        "com.virtual-ffxbase42.accpt-feebase.list-virtualMouseDl-0,03.reroll-setting_accptDevice.dat": "60-100",
-        "com.libsystem_pthread.dylib-Pre9M76X3pyLNQCUO6.select.on_allow.file.list": true,
-        "acp_file_connected_freefireth-listextension": 1,
-        "acp_freefireth-listextension": 1,
-        "select_freefireth-listextension": 1,
-        "act_code_injection_file_connected_freefireth-listextension": 1,
-        "acp_file_seclect_root_hide_sysn_auto_dat": 1,
-        "conf_idelay": 1,
-        "unlockernel_click": 1,
-        "const_udelay": 1,
-        "com.unlockplatform_driverxbase64": 1
-    };
-
-    const keysTrue = [
-        "com.ss-ffx64.aps", "com.gamsrollm.list", "com.analytics-sys.ips",
-        "com.maxpointer.inject.ips", "com.fixrecoil-ffbase64"
-    ];
-
-    // Hợp nhất toàn bộ config
-    json.injectionConfig = {
-        AimLockConfig,
-        AimNeckConfig,
-        FeatherDragHeadLock,
-        NoOverHeadDrag,
-        DragHeadLockStabilizer,
-        SmartBoneAutoHeadLock,
-        HeadLockClamp,
-        HeadLockAim,
-        HipAssistAim,
-        AimSnapToHead,
-        HyperMaxLockSystem,
-        FreeFireSystemInjection,
-        FullAutoAimDragLock
-    };
-
-    // Patch custom values
-    Object.entries(customValues).forEach(([k, v]) => {
-      json[k] = v;
-    });
-    keysTrue.forEach(k => {
-      json[k] = true;
-    });
-
-    $done({ body: JSON.stringify(json) });
+    // Patch cấu hình
+json.injectionConfig = {
+  AimLockConfig,
+  AimNeckConfig,
+  FeatherDragHeadLock,
+  NoOverHeadDrag,
+  DragHeadLockStabilizer,
+  SmartBoneAutoHeadLock,
+  HeadLockClamp,
+  HeadLockAim,
+  HipAssistAim,
+  AimSnapToHead,
+  HyperMaxLockSystem,
+  FreeFireSystemInjection,
+  FullAutoAimDragLock
+};
+      $done({ body: JSON.stringify(json) });
   } catch (e) {
-    console.log("❌ JSON parse error", e);
     $done({ body });
   }
 } else {
   $done({});
 }
+    // Gán giá trị đặc biệt
+    Object.entries(customValues).forEach(([k, v]) => {
+        json[k] = v;
+    });
+
+    // Set các key = true
+    keysTrue.forEach(k => {
+        json[k] = true;
+    });
+
+    body = JSON.stringify(json);
+} catch (e) {
+    console.log("❌ Không parse được JSON, giữ nguyên.", e);
+}
+
+$done({ body });
