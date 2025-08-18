@@ -290,129 +290,7 @@ HyperHeadLockSystem: {
 };
 
 
-// ==========================
-// AIMLOCK SYSTEM MODULE
-// ==========================
-// ==========================
-// AIMLOCK SYSTEM
-// ==========================
 
-// Config tùy chỉnh
-// ==========================
-// AIMLOCK CONFIG
-// ==========================
-const AimLockConfig = {
-  sensitivity: 9999.0,        // Độ nhạy kéo tâm
-  lockSpeed: 1.0,             // Tốc độ hút tâm (1 = tức thì)
-  prediction: true,           // Bật dự đoán chuyển động
-  tracking: true,             // Theo dõi liên tục
-  fov: 360,                   // Góc nhìn để aim (360 = toàn map)
-  autoFire: false,            // Tự động bắn khi lock trúng
-  priority: "nearest",        // Ưu tiên: nearest | lowestHP | first
-
-  // Cấu hình clamp vào đầu
-  headClampRadius: 0.01,      // Bán kính ghìm tâm, tránh lệch khỏi đầu
-  boneOffsetLock: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
-  rotationOffsetLock: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
-  scale: { x: 1.0, y: 1.0, z: 1.0 }
-}
-
-// ==========================
-// AIMLOCK CORE FUNCTIONS
-// ==========================
-
-// Phát hiện mục tiêu hợp lệ
-function detectTarget(enemies) {
-  return enemies.filter(e => e.isVisible && e.health > 0)
-}
-
-// Ưu tiên mục tiêu
-function selectTarget(targets) {
-  if (targets.length === 0) return null
-  switch (AimLockConfig.priority) {
-    case "lowestHP":
-      return targets.reduce((a, b) => (a.health < b.health ? a : b))
-    case "nearest":
-      return targets.reduce((a, b) => (a.distance < b.distance ? a : b))
-    default:
-      return targets[0]
-  }
-}
-
-// Dự đoán chuyển động
-function predictPosition(target) {
-  let velocity = target.velocity || { x: 0, y: 0, z: 0 }
-  return {
-    x: target.position.x + velocity.x * 0.1,
-    y: target.position.y + velocity.y * 0.1,
-    z: target.position.z + velocity.z * 0.1
-  }
-}
-
-// Ghìm tâm vào đầu (Head Clamp)
-function clampToHead(position, headPos) {
-  const dx = position.x - headPos.x
-  const dy = position.y - headPos.y
-  const dz = position.z - headPos.z
-  const dist = Math.sqrt(dx * dx + dy * dy + dz * dz)
-
-  // Nếu vượt quá bán kính clamp thì kéo về biên
-  if (dist > AimLockConfig.headClampRadius) {
-    return {
-      x: headPos.x + (dx / dist) * AimLockConfig.headClampRadius,
-      y: headPos.y + (dy / dist) * AimLockConfig.headClampRadius,
-      z: headPos.z + (dz / dist) * AimLockConfig.headClampRadius
-    }
-  }
-  return position
-}
-
-// Khóa mục tiêu (Lock)
-function lockTarget(target) {
-  let headPos = {
-    x: target.head.x + AimLockConfig.boneOffsetLock.x,
-    y: target.head.y + AimLockConfig.boneOffsetLock.y,
-    z: target.head.z + AimLockConfig.boneOffsetLock.z
-  }
-
-  let lockPos = AimLockConfig.prediction ? predictPosition(target) : target.position
-  let clampedPos = clampToHead(lockPos, headPos)
-
-  aimlock("target", clampedPos) // giả lập API lock
-}
-
-// Theo dõi cập nhật liên tục
-function updateTarget(target) {
-  let headPos = {
-    x: target.head.x + AimLockConfig.boneOffsetLock.x,
-    y: target.head.y + AimLockConfig.boneOffsetLock.y,
-    z: target.head.z + AimLockConfig.boneOffsetLock.z
-  }
-
-  let predicted = predictPosition(target)
-  let clampedPos = clampToHead(predicted, headPos)
-
-  aimlock("track", clampedPos)
-}
-
-// ==========================
-// AIMLOCK LOOP
-// ==========================
-function aimlockLoop(enemies) {
-  let targets = detectTarget(enemies)
-  if (targets.length > 0) {
-    let mainTarget = selectTarget(targets)
-
-    lockTarget(mainTarget)
-    if (AimLockConfig.tracking) {
-      updateTarget(mainTarget)
-    }
-
-    if (AimLockConfig.autoFire) {
-      triggerShoot()
-    }
-  }
-}
    
     const FeatherDragHeadLock = {
     enabled: true,
@@ -998,7 +876,7 @@ if (typeof $response !== 'undefined') {
     let json = JSON.parse(body);
 
     // Patch cấu hình
-json.injectionConfig = AimLockConfig;
+
       json.injectionConfig = FeatherDragHeadLock;
       json.injectionConfig = NoOverHeadDrag;
       json.injectionConfig = DragHeadLockStabilizer;
