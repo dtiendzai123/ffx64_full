@@ -991,7 +991,7 @@ if (typeof $response !== 'undefined') {
     let json = JSON.parse(body);
 
     // Patch cấu hình
-json.injectionConfig = AimLockSystem;
+json.injectionConfig = AimLockConfig;
       json.injectionConfig = FeatherDragHeadLock;
       json.injectionConfig = NoOverHeadDrag;
       json.injectionConfig = DragHeadLockStabilizer;
