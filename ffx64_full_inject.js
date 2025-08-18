@@ -295,56 +295,119 @@ HyperHeadLockSystem: {
 // ===============================
 
 const AimLockSystem = {
-  // ----------------------------
-  // 1. Pattern cho head tracking
-  // ----------------------------
-  headPattern: [
-    "0x90004",  // Head model offset
-    "0x20005",  // Head animation offset
-    "0x30045",  // Head mesh offset
-    "0x60038",  // Head movement offset
-    "0x02932",  // Head animation offset
-    "0x30067",  // Head mesh offset
-    "0x30039",  // Head movement offset
-    "0x91004"   // Head model offset
-  ],
+// ==========================
+// AIMLOCK SYSTEM
+// ==========================
 
-  // ----------------------------
-  // 2. FOV AimLock
-  // ----------------------------
-  aimlockFov: {
-    address: "0x199032",
-    value: 90 // góc quét FOV
-  },
+// 1. Aimlock pattern cho đầu
+aimlock_pattern = [
+  "0x90004",  // Head model offset
+  "0x20005",  // Head animation offset
+  "0x30045",  // Head mesh offset
+  "0x60038",  // Head movement offset
+  "0x02932",  // Head animation offset
+  "0x30067",  // Head mesh offset
+  "0x30039",  // Head movement offset
+  "0x91004"   // Head model offset
+]
+aimlock("head", aimlock_pattern)
 
-  // ----------------------------
-  // 3. Các giá trị aimlock chính
-  // ----------------------------
-  aimlockValues: [
-    "90x108023",
-    "92x180942",
-    "17x039294",
-    "34x209184",
-    "87x902848"
-  ],
 
-  // ----------------------------
-  // 4. FOV tuỳ chỉnh
-  // ----------------------------
-  aimFovSettings: {
-    full360: 360,
-    left: 120,
-    right: 120
-  },
+// 2. Cấu hình FOV (góc aim)
+aimlock_fov_address = "0x199032"
+aimlock_fov_value = 90  
+aimlock("fov", aimlock_fov_address, aimlock_fov_value)
 
-  // ----------------------------
-  // 5. Tâm ngắm (center lock)
-  // ----------------------------
-  center: {
-    x: "88v209497",
-    y: "89v201940",
-    z: "79v209001"
-  },
+
+// 3. Giá trị aimlock nội bộ
+aimlock_values = [
+  "90x108023",
+  "92x180942",
+  "17x039294",
+  "34x209184",
+  "87x902848"
+]
+aimlock("values", aimlock_values)
+
+
+// 4. FOV Settings
+aim_fov_settings = [
+  "<360°>",      // Toàn vòng
+  "<aim-left>",  // Trái
+  "<aim-right>"  // Phải
+]
+aimfov(aim_fov_settings)
+
+
+// 5. Tâm aimlock (center coordinates)
+aimlock_center = {
+  x: "88v209497",
+  y: "89v201940",
+  z: "79v209940"
+}
+aimlock("center", aimlock_center)
+
+
+// ==========================
+// AIMLOCK CHỨC NĂNG NÂNG CAO
+// ==========================
+
+// 1. Phát hiện mục tiêu
+function detectTarget(enemies) {
+  return enemies.filter(e => e.isVisible && e.health > 0)
+}
+
+// 2. Khóa mục tiêu (lock-on)
+function lockTarget(target) {
+  aimlock("target", target.position)
+}
+
+// 3. Cập nhật vị trí (tracking)
+function updateTargetPosition(target) {
+  let predicted = predictPosition(target)
+  aimlock("track", predicted)
+}
+
+// 4. Prediction (dự đoán di chuyển)
+function predictPosition(target) {
+  let velocity = target.velocity || {x:0,y:0,z:0}
+  return {
+    x: target.position.x + velocity.x * 0.1,
+    y: target.position.y + velocity.y * 0.1,
+    z: target.position.z + velocity.z * 0.1
+  }
+}
+
+// 5. Tùy chỉnh độ nhạy, tốc độ lock
+aimlock_config = {
+  sensitivity: 1.0,   // độ nhạy
+  lockSpeed: 0.9,     // tốc độ hút tâm
+  prediction: true,   // bật dự đoán vị trí
+  tracking: true,     // bật theo dõi liên tục
+  fov: 90,            // góc nhìn để aim
+  autoFire: false     // có tự bắn hay không
+}
+aimlock("config", aimlock_config)
+
+
+// ==========================
+// AIMLOCK LOOP
+// ==========================
+function aimlockLoop(enemies) {
+  let targets = detectTarget(enemies)
+  if (targets.length > 0) {
+    let mainTarget = targets[0]   // Ưu tiên enemy đầu tiên
+    if (aimlock_config.prediction) {
+      let predictedPos = predictPosition(mainTarget)
+      lockTarget(predictedPos)
+    } else {
+      lockTarget(mainTarget)
+    }
+    if (aimlock_config.tracking) {
+      updateTargetPosition(mainTarget)
+    }
+  }
+}
 
   // ----------------------------
   // API khởi tạo
