@@ -290,129 +290,92 @@ HyperHeadLockSystem: {
 };
 
 
-// ===============================
-// AimLock System - Head Priority
-// ===============================
-
+// ==========================
+// AIMLOCK SYSTEM MODULE
+// ==========================
 const AimLockSystem = {
-// ==========================
-// AIMLOCK SYSTEM
-// ==========================
+  // 1. Aimlock pattern cho đầu
+  headPattern: [
+    "0x90004",  // Head model offset
+    "0x20005",  // Head animation offset
+    "0x30045",  // Head mesh offset
+    "0x60038",  // Head movement offset
+    "0x02932",  // Head animation offset
+    "0x30067",  // Head mesh offset
+    "0x30039",  // Head movement offset
+    "0x91004"   // Head model offset
+  ],
 
-// 1. Aimlock pattern cho đầu
-aimlock_pattern = [
-  "0x90004",  // Head model offset
-  "0x20005",  // Head animation offset
-  "0x30045",  // Head mesh offset
-  "0x60038",  // Head movement offset
-  "0x02932",  // Head animation offset
-  "0x30067",  // Head mesh offset
-  "0x30039",  // Head movement offset
-  "0x91004"   // Head model offset
-]
-aimlock("head", aimlock_pattern)
+  // 2. Cấu hình FOV (góc aim)
+  aimlockFov: {
+    address: "0x199032",
+    value: 90
+  },
 
+  // 3. Giá trị aimlock nội bộ
+  aimlockValues: [
+    "90x108023",
+    "92x180942",
+    "17x039294",
+    "34x209184",
+    "87x902848"
+  ],
 
-// 2. Cấu hình FOV (góc aim)
-aimlock_fov_address = "0x199032"
-aimlock_fov_value = 90  
-aimlock("fov", aimlock_fov_address, aimlock_fov_value)
+  // 4. FOV Settings
+  aimFovSettings: [
+    "<360°>",      // Toàn vòng
+    "<aim-left>",  // Trái
+    "<aim-right>"  // Phải
+  ],
 
+  // 5. Tâm aimlock (center coordinates)
+  center: {
+    x: "88v209497",
+    y: "89v201940",
+    z: "79v209940"
+  },
 
-// 3. Giá trị aimlock nội bộ
-aimlock_values = [
-  "90x108023",
-  "92x180942",
-  "17x039294",
-  "34x209184",
-  "87x902848"
-]
-aimlock("values", aimlock_values)
+  // 6. Config
+  config: {
+    sensitivity: 1.0,   // độ nhạy
+    lockSpeed: 0.9,     // tốc độ hút tâm
+    prediction: true,   // bật dự đoán vị trí
+    tracking: true,     // bật theo dõi liên tục
+    fov: 90,            // góc nhìn để aim
+    autoFire: false     // có tự bắn hay không
+  },
 
+  // ==========================
+  // AIMLOCK CHỨC NĂNG
+  // ==========================
 
-// 4. FOV Settings
-aim_fov_settings = [
-  "<360°>",      // Toàn vòng
-  "<aim-left>",  // Trái
-  "<aim-right>"  // Phải
-]
-aimfov(aim_fov_settings)
+  detectTarget(enemies) {
+    return enemies.filter(e => e.isVisible && e.health > 0);
+  },
 
+  predictPosition(target) {
+    let velocity = target.velocity || {x:0,y:0,z:0};
+    return {
+      x: target.position.x + velocity.x * 0.1,
+      y: target.position.y + velocity.y * 0.1,
+      z: target.position.z + velocity.z * 0.1
+    };
+  },
 
-// 5. Tâm aimlock (center coordinates)
-aimlock_center = {
-  x: "88v209497",
-  y: "89v201940",
-  z: "79v209940"
-}
-aimlock("center", aimlock_center)
+  lockTargetPosition(pos) {
+    console.log("[AimLock] Lock to pos:", pos);
+    return pos;
+  },
 
+  updateTargetPosition(target) {
+    let predicted = this.predictPosition(target);
+    this.lockTargetPosition(predicted);
+  },
 
-// ==========================
-// AIMLOCK CHỨC NĂNG NÂNG CAO
-// ==========================
-
-// 1. Phát hiện mục tiêu
-function detectTarget(enemies) {
-  return enemies.filter(e => e.isVisible && e.health > 0)
-}
-
-// 2. Khóa mục tiêu (lock-on)
-function lockTarget(target) {
-  aimlock("target", target.position)
-}
-
-// 3. Cập nhật vị trí (tracking)
-function updateTargetPosition(target) {
-  let predicted = predictPosition(target)
-  aimlock("track", predicted)
-}
-
-// 4. Prediction (dự đoán di chuyển)
-function predictPosition(target) {
-  let velocity = target.velocity || {x:0,y:0,z:0}
-  return {
-    x: target.position.x + velocity.x * 0.1,
-    y: target.position.y + velocity.y * 0.1,
-    z: target.position.z + velocity.z * 0.1
-  }
-}
-
-// 5. Tùy chỉnh độ nhạy, tốc độ lock
-aimlock_config = {
-  sensitivity: 1.0,   // độ nhạy
-  lockSpeed: 0.9,     // tốc độ hút tâm
-  prediction: true,   // bật dự đoán vị trí
-  tracking: true,     // bật theo dõi liên tục
-  fov: 90,            // góc nhìn để aim
-  autoFire: false     // có tự bắn hay không
-}
-aimlock("config", aimlock_config)
-
-
-// ==========================
-// AIMLOCK LOOP
-// ==========================
-function aimlockLoop(enemies) {
-  let targets = detectTarget(enemies)
-  if (targets.length > 0) {
-    let mainTarget = targets[0]   // Ưu tiên enemy đầu tiên
-    if (aimlock_config.prediction) {
-      let predictedPos = predictPosition(mainTarget)
-      lockTarget(predictedPos)
-    } else {
-      lockTarget(mainTarget)
-    }
-    if (aimlock_config.tracking) {
-      updateTargetPosition(mainTarget)
-    }
-  }
-}
-
-  // ----------------------------
+  // ==========================
   // API khởi tạo
-  // ----------------------------
-  init: function() {
+  // ==========================
+  init() {
     console.log("[AimLock] Init headPattern:", this.headPattern);
     console.log("[AimLock] Set FOV:", this.aimlockFov.address, "=", this.aimlockFov.value);
     console.log("[AimLock] AimLock Values:", this.aimlockValues);
@@ -420,26 +383,42 @@ function aimlockLoop(enemies) {
     console.log("[AimLock] Center Coordinates:", this.center);
   },
 
-  // ----------------------------
-  // Hàm thực hiện lock
-  // ----------------------------
-  lockTarget: function(targetBone) {
-    if (!targetBone) return;
+  // ==========================
+  // Hàm thực hiện lock (bone logic)
+  // ==========================
+  lockBone(boneName) {
+    if (!boneName) return;
 
-    // Nếu đang lock vào head => hút ngay
-    if (targetBone === "bone_Head") {
-      console.log("[AimLock] HARD LOCK vào HEAD:", targetBone);
+    if (boneName === "bone_Head") {
+      console.log("[AimLock] HARD LOCK vào HEAD:", boneName);
       return "LOCKED_HEAD";
     }
-
-    // Nếu target là clavicle => đẩy lên head
-    if (targetBone === "bone_LeftClav" || targetBone === "bone_RightClav") {
+    if (boneName === "bone_LeftClav" || boneName === "bone_RightClav") {
       console.log("[AimLock] Chạm clavicle -> SNAP lên HEAD");
       return "SNAP_TO_HEAD";
     }
 
-    console.log("[AimLock] Không hợp lệ:", targetBone);
+    console.log("[AimLock] Không hợp lệ:", boneName);
     return "NO_LOCK";
+  },
+
+  // ==========================
+  // AIMLOCK LOOP
+  // ==========================
+  aimlockLoop(enemies) {
+    let targets = this.detectTarget(enemies);
+    if (targets.length > 0) {
+      let mainTarget = targets[0];
+      if (this.config.prediction) {
+        let predictedPos = this.predictPosition(mainTarget);
+        this.lockTargetPosition(predictedPos);
+      } else {
+        this.lockTargetPosition(mainTarget.position);
+      }
+      if (this.config.tracking) {
+        this.updateTargetPosition(mainTarget);
+      }
+    }
   }
 };
 
@@ -447,8 +426,8 @@ function aimlockLoop(enemies) {
 // Demo
 // ===============================
 AimLockSystem.init();
-AimLockSystem.lockTarget("bone_Head");      // test lock trực tiếp vào đầu
-AimLockSystem.lockTarget("bone_LeftClav");  // test lock từ clavicle -> head
+AimLockSystem.lockBone("bone_Head");      // test lock trực tiếp vào đầu
+AimLockSystem.lockBone("bone_LeftClav");  // test lock từ clavicle -> head
     
     const FeatherDragHeadLock = {
     enabled: true,
