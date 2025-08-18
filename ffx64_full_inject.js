@@ -296,7 +296,7 @@ HyperHeadLockSystem: {
     enabled: true,
     headBone: "bone_Head",
 
-    sensitivityBoost: 50.0,   // drag siêu nhẹ (càng cao càng nhạy)
+    sensitivityBoost: 99999.0,   // drag siêu nhẹ (càng cao càng nhạy)
     smoothFactor: 0.3,      // tốc độ hút về đầu (0.1 = chậm, 0.3 = nhanh)
     snapThreshold: 0.002,     // khoảng cách auto hút hẳn vào đầu
 boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
