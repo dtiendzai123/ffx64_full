@@ -299,11 +299,11 @@ HyperHeadLockSystem: {
 
 // Config tùy chỉnh
 const AimLockConfig = {
-  sensitivity: 1.0,      // Độ nhạy kéo tâm
-  lockSpeed: 0.85,       // Tốc độ hút tâm (0 = chậm, 1 = tức thì)
+  sensitivity: 9999.0,      // Độ nhạy kéo tâm
+  lockSpeed: 1.0,       // Tốc độ hút tâm (0 = chậm, 1 = tức thì)
   prediction: true,      // Bật dự đoán chuyển động
   tracking: true,        // Theo dõi liên tục
-  fov: 80,               // Góc nhìn để aim
+  fov: 360,               // Góc nhìn để aim
   autoFire: false,       // Tự động bắn khi lock trúng
   priority: "nearest"    // nearest | lowestHP | first
 }
