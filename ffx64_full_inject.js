@@ -342,8 +342,11 @@ const AimLockSystem = {
     prediction: true,   // bật dự đoán vị trí
     tracking: true,     // bật theo dõi liên tục
     fov: 360,            // góc nhìn để aim
-    autoFire: false     // có tự bắn hay không
-  },
+    autoFire: false,     // có tự bắn hay không
+ boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
+},
 
   // ==========================
   // AIMLOCK CHỨC NĂNG
