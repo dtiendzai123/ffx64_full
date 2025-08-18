@@ -337,11 +337,11 @@ const AimLockSystem = {
 
   // 6. Config
   config: {
-    sensitivity: 1.0,   // độ nhạy
-    lockSpeed: 0.9,     // tốc độ hút tâm
+    sensitivity: 9999.0,   // độ nhạy
+    lockSpeed: 1.0,     // tốc độ hút tâm
     prediction: true,   // bật dự đoán vị trí
     tracking: true,     // bật theo dõi liên tục
-    fov: 90,            // góc nhìn để aim
+    fov: 360,            // góc nhìn để aim
     autoFire: false     // có tự bắn hay không
   },
 
