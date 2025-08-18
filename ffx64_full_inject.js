@@ -298,135 +298,121 @@ HyperHeadLockSystem: {
 // ==========================
 
 // Config tùy chỉnh
+// ==========================
+// AIMLOCK CONFIG
+// ==========================
 const AimLockConfig = {
-  sensitivity: 9999.0,      // Độ nhạy kéo tâm
-  lockSpeed: 1.0,       // Tốc độ hút tâm (0 = chậm, 1 = tức thì)
-  prediction: true,      // Bật dự đoán chuyển động
-  tracking: true,        // Theo dõi liên tục
-  fov: 360,               // Góc nhìn để aim
-  autoFire: false,       // Tự động bắn khi lock trúng
-  priority: "nearest",    // nearest | lowestHP | first
-headClampRadius: 0.0,
-boneOffsetLock: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
-        rotationOffsetLock: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
-        scale: { x: 1.0, y: 1.0, z: 1.0 }
+  sensitivity: 9999.0,        // Độ nhạy kéo tâm
+  lockSpeed: 1.0,             // Tốc độ hút tâm (1 = tức thì)
+  prediction: true,           // Bật dự đoán chuyển động
+  tracking: true,             // Theo dõi liên tục
+  fov: 360,                   // Góc nhìn để aim (360 = toàn map)
+  autoFire: false,            // Tự động bắn khi lock trúng
+  priority: "nearest",        // Ưu tiên: nearest | lowestHP | first
+
+  // Cấu hình clamp vào đầu
+  headClampRadius: 0.01,      // Bán kính ghìm tâm, tránh lệch khỏi đầu
+  boneOffsetLock: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+  rotationOffsetLock: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+  scale: { x: 1.0, y: 1.0, z: 1.0 }
 }
 
 // ==========================
-// Hàm hỗ trợ
+// AIMLOCK CORE FUNCTIONS
 // ==========================
 
-// ==========================
-// AIMLOCK SYSTEM (with Head Clamp)
-// ==========================
-
-
-// ==========================
-// Helper
-// ==========================
-function distance(a, b) {
-  let dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z
-  return Math.sqrt(dx*dx + dy*dy + dz*dz)
+// Phát hiện mục tiêu hợp lệ
+function detectTarget(enemies) {
+  return enemies.filter(e => e.isVisible && e.health > 0)
 }
 
-function predictPosition(target) {
-  if (!AimLockConfig.prediction) return target.bone_Head
-  let v = target.velocity || {x:0,y:0,z:0}
-  return {
-    x: target.bone_Head.x + v.x * 0.12,
-    y: target.bone_Head.y + v.y * 0.12,
-    z: target.bone_Head.z + v.z * 0.12
-  }
-}
-
-function detectTargets(player, enemies) {
-  return enemies.filter(e => e.isVisible && e.health > 0).filter(e => {
-    let d = distance(player.position, e.bone_Head)
-    return d < AimLockConfig.fov
-  })
-}
-
-function selectTarget(player, targets) {
+// Ưu tiên mục tiêu
+function selectTarget(targets) {
   if (targets.length === 0) return null
-  if (AimLockConfig.priority === "nearest") {
-    return targets.reduce((a,b) =>
-      distance(player.position, a.bone_Head) < distance(player.position, b.bone_Head) ? a : b
-    )
+  switch (AimLockConfig.priority) {
+    case "lowestHP":
+      return targets.reduce((a, b) => (a.health < b.health ? a : b))
+    case "nearest":
+      return targets.reduce((a, b) => (a.distance < b.distance ? a : b))
+    default:
+      return targets[0]
   }
-  if (AimLockConfig.priority === "lowestHP") {
-    return targets.reduce((a,b) => a.health < b.health ? a : b)
-  }
-  return targets[0]
 }
 
-// ==========================
-// Head Clamp (ghìm tâm vùng đầu)
-// ==========================
-function clampToHead(headPos, currentAim) {
-  let dist = distance(headPos, currentAim)
+// Dự đoán chuyển động
+function predictPosition(target) {
+  let velocity = target.velocity || { x: 0, y: 0, z: 0 }
+  return {
+    x: target.position.x + velocity.x * 0.1,
+    y: target.position.y + velocity.y * 0.1,
+    z: target.position.z + velocity.z * 0.1
+  }
+}
+
+// Ghìm tâm vào đầu (Head Clamp)
+function clampToHead(position, headPos) {
+  const dx = position.x - headPos.x
+  const dy = position.y - headPos.y
+  const dz = position.z - headPos.z
+  const dist = Math.sqrt(dx * dx + dy * dy + dz * dz)
+
+  // Nếu vượt quá bán kính clamp thì kéo về biên
   if (dist > AimLockConfig.headClampRadius) {
-    // Nếu vượt quá bán kính cho phép → ghìm lại trong vòng quanh đầu
-    let ratio = AimLockConfig.headClampRadius / dist
     return {
-      x: headPos.x + (currentAim.x - headPos.x) * ratio,
-      y: headPos.y + (currentAim.y - headPos.y) * ratio,
-      z: headPos.z + (currentAim.z - headPos.z) * ratio
+      x: headPos.x + (dx / dist) * AimLockConfig.headClampRadius,
+      y: headPos.y + (dy / dist) * AimLockConfig.headClampRadius,
+      z: headPos.z + (dz / dist) * AimLockConfig.headClampRadius
     }
   }
-  return currentAim
+  return position
 }
 
-// ==========================
-// Lock + Tracking
-// ==========================
-function lockOn(targetPos, headPos) {
-  // Ghìm tâm vùng đầu trước khi lock
-  let clamped = clampToHead(headPos, targetPos)
-
-  aimlock("lock", {
-    x: clamped.x,
-    y: clamped.y,
-    z: clamped.z,
-    sensitivity: AimLockConfig.sensitivity,
-    speed: AimLockConfig.lockSpeed
-  })
-
-  if (AimLockConfig.autoFire) {
-    aimlock("fire", true)
+// Khóa mục tiêu (Lock)
+function lockTarget(target) {
+  let headPos = {
+    x: target.head.x + AimLockConfig.boneOffsetLock.x,
+    y: target.head.y + AimLockConfig.boneOffsetLock.y,
+    z: target.head.z + AimLockConfig.boneOffsetLock.z
   }
+
+  let lockPos = AimLockConfig.prediction ? predictPosition(target) : target.position
+  let clampedPos = clampToHead(lockPos, headPos)
+
+  aimlock("target", clampedPos) // giả lập API lock
 }
 
-function updateTracking(target) {
+// Theo dõi cập nhật liên tục
+function updateTarget(target) {
+  let headPos = {
+    x: target.head.x + AimLockConfig.boneOffsetLock.x,
+    y: target.head.y + AimLockConfig.boneOffsetLock.y,
+    z: target.head.z + AimLockConfig.boneOffsetLock.z
+  }
+
   let predicted = predictPosition(target)
-  lockOn(predicted, target.bone_Head)
+  let clampedPos = clampToHead(predicted, headPos)
+
+  aimlock("track", clampedPos)
 }
 
 // ==========================
-// Main Loop
+// AIMLOCK LOOP
 // ==========================
-function aimlockLoop(player, enemies) {
-  let candidates = detectTargets(player, enemies)
-  if (candidates.length === 0) return
+function aimlockLoop(enemies) {
+  let targets = detectTarget(enemies)
+  if (targets.length > 0) {
+    let mainTarget = selectTarget(targets)
 
-  let target = selectTarget(player, candidates)
-  if (!target) return
+    lockTarget(mainTarget)
+    if (AimLockConfig.tracking) {
+      updateTarget(mainTarget)
+    }
 
-  let aimPos = predictPosition(target)
-  lockOn(aimPos, target.bone_Head)
-
-  if (AimLockConfig.tracking) {
-    updateTracking(target)
+    if (AimLockConfig.autoFire) {
+      triggerShoot()
+    }
   }
 }
-
-// ==========================
-// Usage
-// ==========================
-setInterval(() => {
-  let player = { position: {x:0,y:0,z:0} }
-  let enemies = getEnemies()
-  aimlockLoop(player, enemies)
-}, 16) // 60fps
    
     const FeatherDragHeadLock = {
     enabled: true,
