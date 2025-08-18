@@ -305,20 +305,30 @@ const AimLockConfig = {
   tracking: true,        // Theo dõi liên tục
   fov: 360,               // Góc nhìn để aim
   autoFire: false,       // Tự động bắn khi lock trúng
-  priority: "nearest"    // nearest | lowestHP | first
+  priority: "nearest",    // nearest | lowestHP | first
+headClampRadius: 0.0,
+boneOffsetLock: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffsetLock: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
 }
 
 // ==========================
 // Hàm hỗ trợ
 // ==========================
 
-// Tính khoảng cách giữa 2 điểm
+// ==========================
+// AIMLOCK SYSTEM (with Head Clamp)
+// ==========================
+
+
+// ==========================
+// Helper
+// ==========================
 function distance(a, b) {
   let dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z
   return Math.sqrt(dx*dx + dy*dy + dz*dz)
 }
 
-// Dự đoán vị trí (prediction)
 function predictPosition(target) {
   if (!AimLockConfig.prediction) return target.bone_Head
   let v = target.velocity || {x:0,y:0,z:0}
@@ -329,7 +339,6 @@ function predictPosition(target) {
   }
 }
 
-// Phát hiện mục tiêu trong FOV
 function detectTargets(player, enemies) {
   return enemies.filter(e => e.isVisible && e.health > 0).filter(e => {
     let d = distance(player.position, e.bone_Head)
@@ -337,29 +346,47 @@ function detectTargets(player, enemies) {
   })
 }
 
-// Chọn mục tiêu ưu tiên
 function selectTarget(player, targets) {
   if (targets.length === 0) return null
-
   if (AimLockConfig.priority === "nearest") {
     return targets.reduce((a,b) =>
       distance(player.position, a.bone_Head) < distance(player.position, b.bone_Head) ? a : b
     )
   }
-
   if (AimLockConfig.priority === "lowestHP") {
     return targets.reduce((a,b) => a.health < b.health ? a : b)
   }
-
-  return targets[0] // mặc định chọn enemy đầu tiên
+  return targets[0]
 }
 
-// Hàm lock-on
-function lockOn(targetPos) {
+// ==========================
+// Head Clamp (ghìm tâm vùng đầu)
+// ==========================
+function clampToHead(headPos, currentAim) {
+  let dist = distance(headPos, currentAim)
+  if (dist > AimLockConfig.headClampRadius) {
+    // Nếu vượt quá bán kính cho phép → ghìm lại trong vòng quanh đầu
+    let ratio = AimLockConfig.headClampRadius / dist
+    return {
+      x: headPos.x + (currentAim.x - headPos.x) * ratio,
+      y: headPos.y + (currentAim.y - headPos.y) * ratio,
+      z: headPos.z + (currentAim.z - headPos.z) * ratio
+    }
+  }
+  return currentAim
+}
+
+// ==========================
+// Lock + Tracking
+// ==========================
+function lockOn(targetPos, headPos) {
+  // Ghìm tâm vùng đầu trước khi lock
+  let clamped = clampToHead(headPos, targetPos)
+
   aimlock("lock", {
-    x: targetPos.x,
-    y: targetPos.y,
-    z: targetPos.z,
+    x: clamped.x,
+    y: clamped.y,
+    z: clamped.z,
     sensitivity: AimLockConfig.sensitivity,
     speed: AimLockConfig.lockSpeed
   })
@@ -369,8 +396,13 @@ function lockOn(targetPos) {
   }
 }
 
+function updateTracking(target) {
+  let predicted = predictPosition(target)
+  lockOn(predicted, target.bone_Head)
+}
+
 // ==========================
-// AIMLOCK LOOP
+// Main Loop
 // ==========================
 function aimlockLoop(player, enemies) {
   let candidates = detectTargets(player, enemies)
@@ -380,30 +412,19 @@ function aimlockLoop(player, enemies) {
   if (!target) return
 
   let aimPos = predictPosition(target)
-  lockOn(aimPos)
+  lockOn(aimPos, target.bone_Head)
 
   if (AimLockConfig.tracking) {
     updateTracking(target)
   }
 }
 
-// Theo dõi mục tiêu (tracking)
-function updateTracking(target) {
-  let predicted = predictPosition(target)
-  aimlock("track", predicted)
-}
-
 // ==========================
-// USAGE
+// Usage
 // ==========================
-// Giả lập vòng lặp game
 setInterval(() => {
-  // player và enemies giả định lấy từ API/game memory
-  let player = {
-    position: {x:0, y:0, z:0}
-  }
-
-  let enemies = getEnemies() // giả định function có sẵn
+  let player = { position: {x:0,y:0,z:0} }
+  let enemies = getEnemies()
   aimlockLoop(player, enemies)
 }, 16) // 60fps
    
