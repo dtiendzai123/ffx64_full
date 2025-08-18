@@ -293,145 +293,120 @@ HyperHeadLockSystem: {
 // ==========================
 // AIMLOCK SYSTEM MODULE
 // ==========================
-const AimLockSystem = {
-  // 1. Aimlock pattern cho đầu
-  headPattern: [
-    "0x90004",  // Head model offset
-    "0x20005",  // Head animation offset
-    "0x30045",  // Head mesh offset
-    "0x60038",  // Head movement offset
-    "0x02932",  // Head animation offset
-    "0x30067",  // Head mesh offset
-    "0x30039",  // Head movement offset
-    "0x91004"   // Head model offset
-  ],
+// ==========================
+// AIMLOCK SYSTEM
+// ==========================
 
-  // 2. Cấu hình FOV (góc aim)
-  aimlockFov: {
-    address: "0x199032",
-    value: 90
-  },
+// Config tùy chỉnh
+const AimLockConfig = {
+  sensitivity: 1.0,      // Độ nhạy kéo tâm
+  lockSpeed: 0.85,       // Tốc độ hút tâm (0 = chậm, 1 = tức thì)
+  prediction: true,      // Bật dự đoán chuyển động
+  tracking: true,        // Theo dõi liên tục
+  fov: 80,               // Góc nhìn để aim
+  autoFire: false,       // Tự động bắn khi lock trúng
+  priority: "nearest"    // nearest | lowestHP | first
+}
 
-  // 3. Giá trị aimlock nội bộ
-  aimlockValues: [
-    "90x108023",
-    "92x180942",
-    "17x039294",
-    "34x209184",
-    "87x902848"
-  ],
+// ==========================
+// Hàm hỗ trợ
+// ==========================
 
-  // 4. FOV Settings
-  aimFovSettings: [
-    "<360°>",      // Toàn vòng
-    "<aim-left>",  // Trái
-    "<aim-right>"  // Phải
-  ],
+// Tính khoảng cách giữa 2 điểm
+function distance(a, b) {
+  let dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z
+  return Math.sqrt(dx*dx + dy*dy + dz*dz)
+}
 
-  // 5. Tâm aimlock (center coordinates)
-  center: {
-    x: "88v209497",
-    y: "89v201940",
-    z: "79v209940"
-  },
-
-  // 6. Config
-  config: {
-    sensitivity: 9999.0,   // độ nhạy
-    lockSpeed: 1.0,     // tốc độ hút tâm
-    prediction: true,   // bật dự đoán vị trí
-    tracking: true,     // bật theo dõi liên tục
-    fov: 360,            // góc nhìn để aim
-    autoFire: false,     // có tự bắn hay không
- boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
-        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
-        scale: { x: 1.0, y: 1.0, z: 1.0 }
-},
-
-  // ==========================
-  // AIMLOCK CHỨC NĂNG
-  // ==========================
-
-  detectTarget(enemies) {
-    return enemies.filter(e => e.isVisible && e.health > 0);
-  },
-
-  predictPosition(target) {
-    let velocity = target.velocity || {x:0,y:0,z:0};
-    return {
-      x: target.position.x + velocity.x * 0.1,
-      y: target.position.y + velocity.y * 0.1,
-      z: target.position.z + velocity.z * 0.1
-    };
-  },
-
-  lockTargetPosition(pos) {
-    console.log("[AimLock] Lock to pos:", pos);
-    return pos;
-  },
-
-  updateTargetPosition(target) {
-    let predicted = this.predictPosition(target);
-    this.lockTargetPosition(predicted);
-  },
-
-  // ==========================
-  // API khởi tạo
-  // ==========================
-  init() {
-    console.log("[AimLock] Init headPattern:", this.headPattern);
-    console.log("[AimLock] Set FOV:", this.aimlockFov.address, "=", this.aimlockFov.value);
-    console.log("[AimLock] AimLock Values:", this.aimlockValues);
-    console.log("[AimLock] Aim FOV Settings:", this.aimFovSettings);
-    console.log("[AimLock] Center Coordinates:", this.center);
-  },
-
-  // ==========================
-  // Hàm thực hiện lock (bone logic)
-  // ==========================
-  lockBone(boneName) {
-    if (!boneName) return;
-
-    if (boneName === "bone_Head") {
-      console.log("[AimLock] HARD LOCK vào HEAD:", boneName);
-      return "LOCKED_HEAD";
-    }
-    if (boneName === "bone_LeftClav" || boneName === "bone_RightClav") {
-      console.log("[AimLock] Chạm clavicle -> SNAP lên HEAD");
-      return "SNAP_TO_HEAD";
-    }
-
-    console.log("[AimLock] Không hợp lệ:", boneName);
-    return "NO_LOCK";
-  },
-
-  // ==========================
-  // AIMLOCK LOOP
-  // ==========================
-  aimlockLoop(enemies) {
-    let targets = this.detectTarget(enemies);
-    if (targets.length > 0) {
-      let mainTarget = targets[0];
-      if (this.config.prediction) {
-        let predictedPos = this.predictPosition(mainTarget);
-        this.lockTargetPosition(predictedPos);
-      } else {
-        this.lockTargetPosition(mainTarget.position);
-      }
-      if (this.config.tracking) {
-        this.updateTargetPosition(mainTarget);
-      }
-    }
+// Dự đoán vị trí (prediction)
+function predictPosition(target) {
+  if (!AimLockConfig.prediction) return target.bone_Head
+  let v = target.velocity || {x:0,y:0,z:0}
+  return {
+    x: target.bone_Head.x + v.x * 0.12,
+    y: target.bone_Head.y + v.y * 0.12,
+    z: target.bone_Head.z + v.z * 0.12
   }
-};
+}
 
-// ===============================
-// Demo
-// ===============================
-AimLockSystem.init();
-AimLockSystem.lockBone("bone_Head");      // test lock trực tiếp vào đầu
-AimLockSystem.lockBone("bone_LeftClav");  // test lock từ clavicle -> head
-    
+// Phát hiện mục tiêu trong FOV
+function detectTargets(player, enemies) {
+  return enemies.filter(e => e.isVisible && e.health > 0).filter(e => {
+    let d = distance(player.position, e.bone_Head)
+    return d < AimLockConfig.fov
+  })
+}
+
+// Chọn mục tiêu ưu tiên
+function selectTarget(player, targets) {
+  if (targets.length === 0) return null
+
+  if (AimLockConfig.priority === "nearest") {
+    return targets.reduce((a,b) =>
+      distance(player.position, a.bone_Head) < distance(player.position, b.bone_Head) ? a : b
+    )
+  }
+
+  if (AimLockConfig.priority === "lowestHP") {
+    return targets.reduce((a,b) => a.health < b.health ? a : b)
+  }
+
+  return targets[0] // mặc định chọn enemy đầu tiên
+}
+
+// Hàm lock-on
+function lockOn(targetPos) {
+  aimlock("lock", {
+    x: targetPos.x,
+    y: targetPos.y,
+    z: targetPos.z,
+    sensitivity: AimLockConfig.sensitivity,
+    speed: AimLockConfig.lockSpeed
+  })
+
+  if (AimLockConfig.autoFire) {
+    aimlock("fire", true)
+  }
+}
+
+// ==========================
+// AIMLOCK LOOP
+// ==========================
+function aimlockLoop(player, enemies) {
+  let candidates = detectTargets(player, enemies)
+  if (candidates.length === 0) return
+
+  let target = selectTarget(player, candidates)
+  if (!target) return
+
+  let aimPos = predictPosition(target)
+  lockOn(aimPos)
+
+  if (AimLockConfig.tracking) {
+    updateTracking(target)
+  }
+}
+
+// Theo dõi mục tiêu (tracking)
+function updateTracking(target) {
+  let predicted = predictPosition(target)
+  aimlock("track", predicted)
+}
+
+// ==========================
+// USAGE
+// ==========================
+// Giả lập vòng lặp game
+setInterval(() => {
+  // player và enemies giả định lấy từ API/game memory
+  let player = {
+    position: {x:0, y:0, z:0}
+  }
+
+  let enemies = getEnemies() // giả định function có sẵn
+  aimlockLoop(player, enemies)
+}, 16) // 60fps
+   
     const FeatherDragHeadLock = {
     enabled: true,
     headBone: "bone_Head",
