@@ -272,7 +272,7 @@ HyperHeadLockSystem: {
         enabled: true,
         trackingBone: "bone_Head",
         autoSwitchToNeck: true,
-        trackingSpeed: 1.25,
+        trackingSpeed: 10.0,
         predictionFactor: 0.85,
         snapToleranceAngle: 0.0,
         maxLockDistance: 200.0,
@@ -290,7 +290,102 @@ HyperHeadLockSystem: {
 };
 
 
+// ===============================
+// AimLock System - Head Priority
+// ===============================
 
+const AimLockSystem = {
+  // ----------------------------
+  // 1. Pattern cho head tracking
+  // ----------------------------
+  headPattern: [
+    "0x90004",  // Head model offset
+    "0x20005",  // Head animation offset
+    "0x30045",  // Head mesh offset
+    "0x60038",  // Head movement offset
+    "0x02932",  // Head animation offset
+    "0x30067",  // Head mesh offset
+    "0x30039",  // Head movement offset
+    "0x91004"   // Head model offset
+  ],
+
+  // ----------------------------
+  // 2. FOV AimLock
+  // ----------------------------
+  aimlockFov: {
+    address: "0x199032",
+    value: 90 // góc quét FOV
+  },
+
+  // ----------------------------
+  // 3. Các giá trị aimlock chính
+  // ----------------------------
+  aimlockValues: [
+    "90x108023",
+    "92x180942",
+    "17x039294",
+    "34x209184",
+    "87x902848"
+  ],
+
+  // ----------------------------
+  // 4. FOV tuỳ chỉnh
+  // ----------------------------
+  aimFovSettings: {
+    full360: 360,
+    left: 120,
+    right: 120
+  },
+
+  // ----------------------------
+  // 5. Tâm ngắm (center lock)
+  // ----------------------------
+  center: {
+    x: "88v209497",
+    y: "89v201940",
+    z: "79v209001"
+  },
+
+  // ----------------------------
+  // API khởi tạo
+  // ----------------------------
+  init: function() {
+    console.log("[AimLock] Init headPattern:", this.headPattern);
+    console.log("[AimLock] Set FOV:", this.aimlockFov.address, "=", this.aimlockFov.value);
+    console.log("[AimLock] AimLock Values:", this.aimlockValues);
+    console.log("[AimLock] Aim FOV Settings:", this.aimFovSettings);
+    console.log("[AimLock] Center Coordinates:", this.center);
+  },
+
+  // ----------------------------
+  // Hàm thực hiện lock
+  // ----------------------------
+  lockTarget: function(targetBone) {
+    if (!targetBone) return;
+
+    // Nếu đang lock vào head => hút ngay
+    if (targetBone === "bone_Head") {
+      console.log("[AimLock] HARD LOCK vào HEAD:", targetBone);
+      return "LOCKED_HEAD";
+    }
+
+    // Nếu target là clavicle => đẩy lên head
+    if (targetBone === "bone_LeftClav" || targetBone === "bone_RightClav") {
+      console.log("[AimLock] Chạm clavicle -> SNAP lên HEAD");
+      return "SNAP_TO_HEAD";
+    }
+
+    console.log("[AimLock] Không hợp lệ:", targetBone);
+    return "NO_LOCK";
+  }
+};
+
+// ===============================
+// Demo
+// ===============================
+AimLockSystem.init();
+AimLockSystem.lockTarget("bone_Head");      // test lock trực tiếp vào đầu
+AimLockSystem.lockTarget("bone_LeftClav");  // test lock từ clavicle -> head
     
     const FeatherDragHeadLock = {
     enabled: true,
@@ -876,7 +971,7 @@ if (typeof $response !== 'undefined') {
     let json = JSON.parse(body);
 
     // Patch cấu hình
-
+json.injectionConfig = AimLockSystem;
       json.injectionConfig = FeatherDragHeadLock;
       json.injectionConfig = NoOverHeadDrag;
       json.injectionConfig = DragHeadLockStabilizer;
