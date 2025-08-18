@@ -243,13 +243,13 @@ HyperHeadLockSystem: {
         autoLockOnFire: true,
         holdLockWhileFiring: true,
         trackingSpeed: 1.5,
-        predictionFactor: 0.9,
+        predictionFactor: 0.00001,
         snapToleranceAngle: 0.0,
         stickiness: "extreme",
         disableBodyRecenter: true,
         smoothing: 0.85,
-        boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
-        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        boneOffsetHoldCrosshairOnHeadWhenFire: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffsetHoldCrosshairOnHeadWhenFire: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
         scale: { x: 1.0, y: 1.0, z: 1.0 }
     },
 
@@ -262,9 +262,9 @@ HyperHeadLockSystem: {
         snapToleranceAngle: 0.0,
         stickiness: "extreme",
         headLockPriority: true,
-        predictionFactor: 0.85,
-        boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
-        rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
+        predictionFactor: 0.0001,
+        boneOffsetStableDragLockHead: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+        rotationOffsetStableDragLockHead: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
         scale: { x: 1.0, y: 1.0, z: 1.0 }
     },
 
@@ -273,7 +273,7 @@ HyperHeadLockSystem: {
         trackingBone: "bone_Head",
         autoSwitchToNeck: true,
         trackingSpeed: 10.0,
-        predictionFactor: 0.85,
+        predictionFactor: 0.0001,
         snapToleranceAngle: 0.0,
         maxLockDistance: 200.0,
         stickiness: "extreme",
@@ -295,7 +295,7 @@ HyperHeadLockSystem: {
 // Cấu hình Aimlock
 const AimLockConfig = {
   sensitivity: 9999.0,      // Độ nhạy kéo tâm
-  lockSpeed: 0.9,        // Tốc độ hút tâm (0 = chậm, 1 = tức thì)
+  lockSpeed: 1.0,        // Tốc độ hút tâm (0 = chậm, 1 = tức thì)
   prediction: true,      // Bật dự đoán chuyển động
   tracking: true,        // Theo dõi liên tục
   fov: 360,              // Góc nhìn để aim
