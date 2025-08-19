@@ -414,193 +414,218 @@ console.log("[Aimbot Output]", action);
 // AIMLOCK SYSTEM (MOBILE)
 // ==========================
 
-// Cấu hình Aimlock
-const AimLockConfig = {
-  sensitivity: 9999.0,      // Độ nhạy kéo tâm
-  lockSpeed: 2.0,        // Tốc độ hút tâm (0 = chậm, 1 = tức thì)
-  prediction: true,      // Bật dự đoán chuyển động
-  tracking: true,        // Theo dõi liên tục
-  fov: 360,              // Góc nhìn để aim
-  autoFire: false,       // Tự động bắn khi lock trúng
-  priority: "nearest"    // nearest | lowestHP | first
-}
+const AimLockSystem = {
+  // ==========================
+  // 0. Config
+  // ==========================
+  config: {
+    sensitivity: 9999.0,         // Độ nhạy kéo tâm
+    lockSpeed: 2.0,              // Tốc độ hút tâm (0 = chậm, 1 = tức thì)
+    prediction: true,            // Bật dự đoán chuyển động
+    tracking: true,              // Theo dõi liên tục
+    fov: 360,                    // Góc nhìn để aim
+    autoFire: false,             // Tự động bắn khi lock trúng
+    priority: "nearest",         // nearest | lowestHP | first
+    boneOffset: { x: 0, y: 0.05, z: 0 } // Dịch lên đầu (head clamp)
+  },
 
-// ==========================
-// 1. Phát hiện mục tiêu
-// ==========================
-function detectTarget(enemies, playerPos) {
-  return enemies
-    .filter(e => e.isVisible && e.health > 0)
-    .sort((a, b) => {
-      if (AimLockConfig.priority === "nearest") {
-        return distance(playerPos, a.position) - distance(playerPos, b.position)
-      } else if (AimLockConfig.priority === "lowestHP") {
-        return a.health - b.health
-      } else {
-        return 0
-      }
-    })
-}
+  // ==========================
+  // 1. Phát hiện mục tiêu
+  // ==========================
+  detectTarget(enemies, playerPos) {
+    return enemies
+      .filter(e => e.isVisible && e.health > 0)
+      .sort((a, b) => {
+        if (this.config.priority === "nearest") {
+          return this.distance(playerPos, a.position) - this.distance(playerPos, b.position)
+        } else if (this.config.priority === "lowestHP") {
+          return a.health - b.health
+        } else {
+          return 0
+        }
+      })
+  },
 
-// ==========================
-// 2. Khóa mục tiêu (lock-on)
-// ==========================
-function lockTarget(target) {
-  if (!target) return
-  let pos = target.position
-  aimlockScreenTap(pos)   // di chuyển tâm ngắm tới vị trí target
-}
+  // ==========================
+  // 2. Khóa mục tiêu (Lock-On)
+  // ==========================
+  lockTarget(target) {
+    if (!target) return
+    let pos = this.applyHeadClamp(target.position)
+    this.aimlockScreenTap(pos)
+  },
 
-// ==========================
-// 3. Cập nhật vị trí (tracking)
-// ==========================
-function updateTargetPosition(target) {
-  if (!target) return
-  let predicted = AimLockConfig.prediction ? predictPosition(target) : target.position
-  aimlockScreenTap(predicted)
-}
+  // ==========================
+  // 3. Tracking (Theo dõi liên tục)
+  // ==========================
+  updateTargetPosition(target) {
+    if (!target) return
+    let predicted = this.config.prediction ? this.predictPosition(target) : target.position
+    let clamped = this.applyHeadClamp(predicted)
+    this.aimlockScreenTap(clamped)
+  },
 
-// ==========================
-// 4. Prediction (dự đoán di chuyển)
-// ==========================
-function predictPosition(target) {
-  let velocity = target.velocity || {x:0,y:0,z:0}
-  return {
-    x: target.position.x + velocity.x * 0.1,
-    y: target.position.y + velocity.y * 0.1,
-    z: target.position.z + velocity.z * 0.1
-  }
-}
-
-// ==========================
-// 5. Điều khiển chạm màn hình
-// ==========================
-function aimlockScreenTap(screenPos) {
-  // Giả lập việc kéo tâm ngắm bằng cảm ứng
-  // Ở môi trường thực tế, thay bằng API tap/drag của engine
-  console.log("Moving crosshair to:", screenPos)
-}
-
-// ==========================
-// 6. Vòng lặp Aimlock
-// ==========================
-function aimlockLoop(enemies, player) {
-  let targets = detectTarget(enemies, player.position)
-  if (targets.length > 0) {
-    let mainTarget = targets[0]
-
-    // Khóa mục tiêu
-    lockTarget(mainTarget)
-
-    // Nếu tracking bật thì update liên tục
-    if (AimLockConfig.tracking) {
-      updateTargetPosition(mainTarget)
+  // ==========================
+  // 4. Prediction (dự đoán di chuyển)
+  // ==========================
+  predictPosition(target) {
+    let velocity = target.velocity || {x:0,y:0,z:0}
+    return {
+      x: target.position.x + velocity.x * 0.1,
+      y: target.position.y + velocity.y * 0.1,
+      z: target.position.z + velocity.z * 0.1
     }
+  },
+
+  // ==========================
+  // 5. Clamp vào Head Bone
+  // ==========================
+  applyHeadClamp(pos) {
+    return {
+      x: pos.x + this.config.boneOffset.x,
+      y: pos.y + this.config.boneOffset.y,
+      z: pos.z + this.config.boneOffset.z
+    }
+  },
+
+  // ==========================
+  // 6. Điều khiển chạm màn hình
+  // ==========================
+  aimlockScreenTap(screenPos) {
+    console.log("Crosshair moving to:", screenPos)
+  },
+
+  // ==========================
+  // 7. Vòng lặp chính Aimlock
+  // ==========================
+  aimlockLoop(enemies, player) {
+    let targets = this.detectTarget(enemies, player.position)
+    if (targets.length > 0) {
+      let mainTarget = targets[0]
+
+      // Khóa cứng vào head
+      this.lockTarget(mainTarget)
+
+      // Theo dõi liên tục
+      if (this.config.tracking) {
+        this.updateTargetPosition(mainTarget)
+      }
+
+      // Auto fire nếu bật
+      if (this.config.autoFire) {
+        console.log("Auto firing at target!")
+      }
+    }
+  },
+
+  // ==========================
+  // Helper: Tính khoảng cách
+  // ==========================
+  distance(a, b) {
+    return Math.sqrt(
+      (a.x - b.x) ** 2 +
+      (a.y - b.y) ** 2 +
+      (a.z - b.z) ** 2
+    )
   }
 }
 
-// ==========================
-// Helper: Tính khoảng cách
-// ==========================
-function distance(a, b) {
-  return Math.sqrt(
-    (a.x - b.x) ** 2 +
-    (a.y - b.y) ** 2 +
-    (a.z - b.z) ** 2
-  )
-}
+
 // =======================
-// AIMNECK CONFIG
+// AIMNECK CONFIG MODULE
 // =======================
 const AimNeckConfig = {
-  sensitivity: 9999.0,         // Độ nhạy di chuyển tâm
-  lockSpeed: 0.95,          // Tốc độ hút tâm (1 = tức thì)
-  prediction: true,         // Bật dự đoán vị trí cổ
-  tracking: true,           // Theo dõi liên tục
-  fov: 360,                 // Góc quét tìm mục tiêu
-  autoFire: false,          // Bắn tự động khi lock
-  aimBone: "bone_Neck",     // Vùng cổ mặc định
-  headAssist: true,         // Nếu kéo lên trên, auto hút vào đầu
-  screenTapEnabled: true,   // Điều khiển chạm màn hình
-  clamp: { minY: 0, maxY: 0 } // Giới hạn lock (không vượt quá đầu)
-}
+  name: "AimNeckSystem",
+  enabled: true,
 
-// =======================
-// AIMNECK CORE FUNCTIONS
-// =======================
+  config: {
+    sensitivity: 9999.0,         // Độ nhạy di chuyển tâm
+    lockSpeed: 0.95,             // Tốc độ hút tâm (1 = tức thì)
+    prediction: true,            // Bật dự đoán vị trí cổ
+    tracking: true,              // Theo dõi liên tục
+    fov: 360,                    // Góc quét tìm mục tiêu
+    autoFire: false,             // Bắn tự động khi lock
+    aimBone: "bone_Neck",        // Vùng cổ mặc định
+    headAssist: true,            // Nếu kéo lên trên, auto hút vào đầu
+    screenTapEnabled: true,      // Điều khiển chạm màn hình
+    clamp: { minY: 0, maxY: 0 }, // Giới hạn lock (không vượt quá đầu)
 
-// 1. Phát hiện vị trí cổ
-function detectNeckTarget(enemies) {
-  return enemies.filter(e => e.isVisible && e.health > 0)
-                .map(e => ({ 
-                   enemy: e, 
-                   neckPos: getBonePosition(e, AimNeckConfig.aimBone) 
-                }))
-}
+    // Thêm offset để dễ chỉnh từ cổ sang đầu
+    boneOffset: { x: 0, y: 0.22, z: 0 } 
+  },
 
-// Giả lập lấy vị trí bone cổ từ nhân vật
-function getBonePosition(enemy, bone) {
-  return enemy.bones && enemy.bones[bone] ? enemy.bones[bone] : enemy.position
-}
+  // 1. Phát hiện vị trí cổ
+  detectNeckTarget(enemies) {
+    return enemies.filter(e => e.isVisible && e.health > 0)
+                  .map(e => ({ 
+                     enemy: e, 
+                     neckPos: this.getBonePosition(e, this.config.aimBone) 
+                  }))
+  },
 
-// 2. Prediction: dự đoán di chuyển cổ
-function predictNeckPosition(target) {
-  let velocity = target.enemy.velocity || {x:0,y:0,z:0}
-  return {
-    x: target.neckPos.x + velocity.x * 0.1,
-    y: target.neckPos.y + velocity.y * 0.1,
-    z: target.neckPos.z + velocity.z * 0.1
+  // Giả lập lấy vị trí bone cổ từ nhân vật
+  getBonePosition(enemy, bone) {
+    let base = enemy.bones && enemy.bones[bone] ? enemy.bones[bone] : enemy.position
+    // Áp dụng offset để dễ kéo sang đầu
+    return {
+      x: base.x + this.config.boneOffset.x,
+      y: base.y + this.config.boneOffset.y,
+      z: base.z + this.config.boneOffset.z
+    }
+  },
+
+  // 2. Prediction: dự đoán di chuyển cổ
+  predictNeckPosition(target) {
+    let velocity = target.enemy.velocity || {x:0,y:0,z:0}
+    return {
+      x: target.neckPos.x + velocity.x * 0.1,
+      y: target.neckPos.y + velocity.y * 0.1,
+      z: target.neckPos.z + velocity.z * 0.1
+    }
+  },
+
+  // 3. Tính toán hướng để nhắm cổ
+  calculateAimDirection(playerPos, targetPos) {
+    return {
+      x: targetPos.x - playerPos.x,
+      y: targetPos.y - playerPos.y,
+      z: targetPos.z - playerPos.z
+    }
+  },
+
+  // 4. Điều khiển drag/tap màn hình
+  screenTapTo(targetPos) {
+    if (this.config.screenTapEnabled) {
+      console.log("Screen tap/drag tới:", targetPos)
+    }
+  },
+
+  // Áp dụng aimlock (dịch chuyển crosshair)
+  applyAimLock(direction) {
+    console.log("AimLock hướng tới:", direction)
+  },
+
+  // 5. Aimneck Loop
+  run(player, enemies) {
+    if (!this.enabled) return
+    let targets = this.detectNeckTarget(enemies)
+    if (targets.length === 0) return
+
+    let target = targets[0]
+    let lockPos = this.config.prediction ? this.predictNeckPosition(target) : target.neckPos
+    
+    let dir = this.calculateAimDirection(player.position, lockPos)
+
+    // Giới hạn: không vượt quá đầu
+    if (this.config.headAssist) {
+      if (dir.y > this.config.clamp.maxY) dir.y = this.config.clamp.maxY
+      if (dir.y < this.config.clamp.minY) dir.y = this.config.clamp.minY
+    }
+
+    this.applyAimLock(dir)
+    this.screenTapTo(lockPos)
   }
 }
-
-// 3. Tính toán hướng để nhắm cổ
-function calculateAimDirection(playerPos, targetPos) {
-  return {
-    x: targetPos.x - playerPos.x,
-    y: targetPos.y - playerPos.y,
-    z: targetPos.z - playerPos.z
-  }
-}
-
-// 4. Điều khiển drag/tap màn hình
-function screenTapTo(targetPos) {
-  if (AimNeckConfig.screenTapEnabled) {
-    console.log("Screen tap/drag tới:", targetPos)
-    // Ở mobile thực tế sẽ là API điều khiển cảm ứng
-  }
-}
-
-// 5. Aimneck Loop
-function aimNeckLoop(player, enemies) {
-  let targets = detectNeckTarget(enemies)
-  if (targets.length === 0) return
-
-  // Ưu tiên mục tiêu đầu tiên trong FOV
-  let target = targets[0]
-  let lockPos = AimNeckConfig.prediction ? predictNeckPosition(target) : target.neckPos
-  
-  // Tính hướng
-  let dir = calculateAimDirection(player.position, lockPos)
-
-  // Giới hạn: không vượt quá đầu
-  if (AimNeckConfig.headAssist) {
-    if (dir.y > AimNeckConfig.clamp.maxY) dir.y = AimNeckConfig.clamp.maxY
-    if (dir.y < AimNeckConfig.clamp.minY) dir.y = AimNeckConfig.minY
-  }
-
-  // Hút tâm vào cổ
-  applyAimLock(dir)
-
-  // Điều khiển màn hình
-  screenTapTo(lockPos)
-}
-
-// Áp dụng aimlock (dịch chuyển crosshair)
-function applyAimLock(direction) {
-  console.log("AimLock hướng tới:", direction)
-  // Trong mobile thực tế sẽ translate sang điều khiển cảm ứng / camera
-}
-
    
     const FeatherDragHeadLock = {
     enabled: true,
