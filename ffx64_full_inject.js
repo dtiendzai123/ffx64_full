@@ -215,7 +215,8 @@ HyperHeadLockSystem: {
         snapToleranceAngle: 0.0,
         stickiness: "extreme",
         applyWhileFiring: true,
-        predictionFactor: 0.85,
+        predictionFactor: 0.0,
+       adaptToWeapon: true,    
         boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
         rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
         scale: { x: 1.0, y: 1.0, z: 1.0 }
@@ -262,7 +263,7 @@ HyperHeadLockSystem: {
         snapToleranceAngle: 0.0,
         stickiness: "extreme",
         headLockPriority: true,
-        predictionFactor: 0.0001,
+        predictionFactor: 0.0,
         boneOffsetStableDragLockHead: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
         rotationOffsetStableDragLockHead: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
         scale: { x: 1.0, y: 1.0, z: 1.0 }
@@ -288,14 +289,135 @@ HyperHeadLockSystem: {
     FixLagBoost: { fixResourceTask: true },
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
-// ==========================
+const AIMBOT_SYSTEM = (() => {
+    // ===============================
+    // AIMBOT MOBILE - CORE STRUCTURE
+    // ===============================
+
+    class Vector3 {
+        constructor(x=0, y=0, z=0) {
+            this.x = x; this.y = y; this.z = z;
+        }
+        subtract(v) { return new Vector3(this.x - v.x, this.y - v.y, this.z - v.z); }
+        add(v) { return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z); }
+        length() { return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z); }
+        normalize() {
+            const l = this.length() || 1;
+            return new Vector3(this.x/l, this.y/l, this.z/l);
+        }
+    }
+
+    class TargetDetector {
+        constructor() {
+            this.targets = [];
+        }
+
+        detectEnemies(frameData) {
+            this.targets = frameData.enemies || [];
+            return this.targets;
+        }
+
+        getClosestTarget(playerPos) {
+            let bestTarget = null;
+            let bestDist = Infinity;
+            for (let t of this.targets) {
+                const dist = playerPos.subtract(new Vector3(t.x, t.y, t.z)).length();
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    bestTarget = t;
+                }
+            }
+            return bestTarget;
+        }
+    }
+
+    class PositionCalculator {
+    static calculateAimPoint(player, target) {
+        if (!target) return null;
+
+        // lấy boneOffset từ target (nếu có), fallback về 0
+        const boneOffset = target.boneOffset 
+            ? new Vector3(target.boneOffset.x, target.boneOffset.y, target.boneOffset.z) 
+            : new Vector3(0, 0.25, 0);
+
+        return new Vector3(
+            target.x + boneOffset.x,
+            target.y + boneOffset.y,
+            target.z + boneOffset.z
+        );
+    }
+}
+
+    class ScreenController {
+        static aimAt(aimPoint, screenCenter, sensitivity=1.0) {
+            if (!aimPoint) return null;
+            const dx = (aimPoint.x - screenCenter.x) * sensitivity;
+            const dy = (aimPoint.y - screenCenter.y) * sensitivity;
+            return { action: "drag", moveX: dx, moveY: dy };
+        }
+    }
+
+    const CONFIG = {
+        enabled: true,
+        trackingSpeed: 10.0,
+        predictionFactor: 0.0,
+        sensitivity: 9999.0,
+        maxDistance: 9999.0,
+        stickiness: "strong"
+    };
+
+    class Engine {
+        constructor() {
+            this.detector = new TargetDetector();
+            this.playerPos = new Vector3(0,0,0);
+            this.screenCenter = new Vector3(0.5, 0.5, 0);
+        }
+
+        update(frameData) {
+            if (!CONFIG.enabled) return null;
+            const enemies = this.detector.detectEnemies(frameData);
+            const target = this.detector.getClosestTarget(this.playerPos);
+            const aimPoint = PositionCalculator.calculateAimPoint(this.playerPos, target);
+            return ScreenController.aimAt(aimPoint, this.screenCenter, CONFIG.sensitivity);
+        }
+    }
+
+    return {
+        Vector3,
+        TargetDetector,
+        PositionCalculator,
+        ScreenController,
+        CONFIG,
+        Engine
+    };
+})();
+
+// ===============================
+// GIẢ LẬP VÒNG LẶP
+// ===============================
+const engine = new AIMBOT_SYSTEM.Engine();
+const frameData = {
+    enemies: [
+        { 
+            x: 0, y: 1.7, z: 0,
+            boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 } // offset head
+        },
+        { 
+            x: 0, y: 1.7, z: 0,
+            boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 } // offset head mặc định
+        }
+    ]
+};
+const action = engine.update(frameData);
+console.log("[Aimbot Output]", action);
+    // ==========================
 // AIMLOCK SYSTEM (MOBILE)
 // ==========================
 
 // Cấu hình Aimlock
 const AimLockConfig = {
   sensitivity: 9999.0,      // Độ nhạy kéo tâm
-  lockSpeed: 1.0,        // Tốc độ hút tâm (0 = chậm, 1 = tức thì)
+  lockSpeed: 2.0,        // Tốc độ hút tâm (0 = chậm, 1 = tức thì)
   prediction: true,      // Bật dự đoán chuyển động
   tracking: true,        // Theo dõi liên tục
   fov: 360,              // Góc nhìn để aim
@@ -1065,7 +1187,8 @@ if (typeof $response !== 'undefined') {
 
     // Patch cấu hình
 json.injectionConfig = {
-  AimLockConfig,
+  AIMBOT_SYSTEM,
+    AimLockConfig,
   AimNeckConfig,
   FeatherDragHeadLock,
   NoOverHeadDrag,
