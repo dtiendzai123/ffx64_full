@@ -289,7 +289,131 @@ HyperHeadLockSystem: {
     FixLagBoost: { fixResourceTask: true },
     CloseLauncherRestore: { closeLauncher: true, forceRestore: true }
 };
-const AIMBOT_SYSTEM = (() => {
+// ===============================
+// Auto Head Lock Module (All-in-One Const)
+// ===============================
+
+const AutoHeadLockModule = (() => {
+
+    // ===== Vector3 =====
+    class Vector3 {
+        constructor(x = 0, y = 0, z = 0) {
+            this.x = x; this.y = y; this.z = z;
+        }
+        subtract(v) { return new Vector3(this.x - v.x, this.y - v.y, this.z - v.z); }
+        magnitude() { return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z); }
+        normalize() {
+            let mag = this.magnitude();
+            return mag === 0 ? new Vector3(0,0,0) : new Vector3(this.x/mag, this.y/mag, this.z/mag);
+        }
+    }
+
+    // ===== Config Race =====
+    const RaceConfig = {
+        raceName: "BaseMale",
+        headSlot: "Head",          
+        headBone: "bone_Head",     
+        bodyBones: ["bone_Chest", "bone_Spine", "bone_Legs", "bone_Feet"],
+        sensitivity: 0.9,   // độ nhạy auto kéo về đầu
+        height: 2.0,
+        radius: 0.25,
+        mass: 50.0
+    };
+
+    // ===== Kalman Filter =====
+    class KalmanFilter {
+        constructor(r = 0.01, q = 0.1) {
+            this.r = r; this.q = q;
+            this.p = 1; this.x = 0; this.k = 0;
+        }
+        filter(value) {
+            this.p += this.q;
+            this.k = this.p / (this.p + this.r);
+            this.x += this.k * (value - this.x);
+            this.p *= (1 - this.k);
+            return this.x;
+        }
+    }
+
+    // ===== Auto Head Lock =====
+    class AutoHeadLock {
+        constructor() {
+            this.kalmanX = new KalmanFilter();
+            this.kalmanY = new KalmanFilter();
+            this.kalmanZ = new KalmanFilter();
+        }
+
+        getBone(enemy, boneName) {
+            if (!enemy || !enemy.bones) return new Vector3();
+            return enemy.bones[boneName] || new Vector3();
+        }
+
+        detectClosestBone(player, enemy) {
+            let minDist = Infinity;
+            let closest = null;
+            for (let bone of [RaceConfig.headBone, ...RaceConfig.bodyBones]) {
+                let pos = this.getBone(enemy, bone);
+                let dist = pos.subtract(player.position).magnitude();
+                if (dist < minDist) {
+                    minDist = dist;
+                    closest = bone;
+                }
+            }
+            return closest;
+        }
+
+        lockCrosshair(player, enemy) {
+            if (!enemy) return;
+
+            let targetBone = this.detectClosestBone(player, enemy);
+
+            if (targetBone !== RaceConfig.headBone) {
+                let chance = Math.random();
+                if (chance < RaceConfig.sensitivity) {
+                    targetBone = RaceConfig.headBone;
+                }
+            }
+
+            let bonePos = this.getBone(enemy, targetBone);
+            let dir = bonePos.subtract(player.position).normalize();
+
+            dir.x = this.kalmanX.filter(dir.x);
+            dir.y = this.kalmanY.filter(dir.y);
+            dir.z = this.kalmanZ.filter(dir.z);
+
+            player.crosshairDir = dir;
+            console.log(`🎯 Locked to ${targetBone} (Priority → Head) of ${RaceConfig.raceName}`);
+        }
+    }
+
+    // Xuất public API
+    return {
+        Vector3,
+        RaceConfig,
+        KalmanFilter,
+        AutoHeadLock
+    };
+
+})();
+
+// ===============================
+// Demo sử dụng
+// ===============================
+let player = { position: new AutoHeadLockModule.Vector3(0, 0, 0), crosshairDir: new AutoHeadLockModule.Vector3() };
+let enemy = {
+    bones: {
+        bone_Head: new AutoHeadLockModule.Vector3(10, 2, 50),
+        bone_Chest: new AutoHeadLockModule.Vector3(10, 1.5, 50),
+        bone_Legs: new AutoHeadLockModule.Vector3(10, 0.5, 50)
+    }
+};
+
+let headLock = new AutoHeadLockModule.AutoHeadLock();
+headLock.lockCrosshair(player, enemy);
+
+console.log("CrosshairDir:", player.crosshairDir);
+    const AIMBOT_SYSTEM = (() => {
+    
     // ===============================
     // AIMBOT MOBILE - CORE STRUCTURE
     // ===============================
@@ -1212,7 +1336,8 @@ if (typeof $response !== 'undefined') {
 
     // Patch cấu hình
 json.injectionConfig = {
-  AIMBOT_SYSTEM,
+AutoHeadLockModule,
+    AIMBOT_SYSTEM,
     AimLockConfig,
   AimNeckConfig,
   FeatherDragHeadLock,
