@@ -314,7 +314,7 @@ const AutoHeadLockModule = (() => {
         headSlot: "Head",          
         headBone: "bone_Head",     
         bodyBones: ["bone_Chest", "bone_Spine", "bone_Legs", "bone_Feet"],
-        sensitivity: 0.9,   // độ nhạy auto kéo về đầu
+        sensitivity: 9999.0,   // độ nhạy auto kéo về đầu
         height: 2.0,
         radius: 0.25,
         mass: 50.0
