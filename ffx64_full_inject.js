@@ -436,7 +436,16 @@ const FreeFireAutoHeadLockModule = (() => {
         console.log(`⚡ Drag sensitivity adjusted (${targetBone}) → ${sens}`);
     }
 };
+  }
+AimSystem.lockToHead(player, enemy);
 
+// Bước 2: Fix recoil
+AimSystem.applyRecoilFix(player);
+
+// Bước 3: Điều chỉnh kéo tâm (head ưu tiên nhạy hơn body)
+AimSystem.adjustDrag(player, "head");
+
+console.log("Final Crosshair:", player.crosshairDir, "DragForce:", player.dragForce);
 
   // ===== Crosshair Lock Engine =====
   function lockCrosshairIfOnHead(playerPos, headPos, threshold = 0.000001) {
@@ -514,16 +523,7 @@ const FreeFireAutoHeadLockModule = (() => {
       if (dist < bestDist) { bestDist = dist; best = e; }
     }
     return best;
-  }
-AimSystem.lockToHead(player, enemy);
 
-// Bước 2: Fix recoil
-AimSystem.applyRecoilFix(player);
-
-// Bước 3: Điều chỉnh kéo tâm (head ưu tiên nhạy hơn body)
-AimSystem.adjustDrag(player, "head");
-
-console.log("Final Crosshair:", player.crosshairDir, "DragForce:", player.dragForce);
   // ===== Aimlock Loop (async) =====
   async function startAimlock() {
     let player = { x: 0, y: 0 };
