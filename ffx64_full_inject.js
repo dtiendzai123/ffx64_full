@@ -475,8 +475,8 @@ const FreeFireAutoHeadLockModule = (() => {
   async function startAimlock() {
     let player = { x: 0, y: 0 };
     let enemies = [
-      { head: { x: -0.045, y: -0.0044 }, hip: { x: -0.053, y: -0.0035 } },
-      { head: { x:  0.050, y:  0.0050 }, hip: { x:  0.052, y:  0.0030 } }
+      { head: { head: { x: -0.0456970781, y: -0.004478302 }, hip: { x: -0.05334, y: -0.003515 } },
+      { head: { head: { x: -0.0456970781, y: -0.004478302 }, hip: { x: -0.05334, y: -0.003515 } }
     ];
     console.log("🚀 AIMLOCK running...");
     while (true) {
