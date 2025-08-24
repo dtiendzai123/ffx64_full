@@ -407,30 +407,51 @@ const FreeFireAutoHeadLockModule = (() => {
 
   // ===== Free Fire Config =====
   const FreeFireConfig = {
-    start: { locale: true, runsFromHomeScreen: 16 },
-    screenResolution: { default: { width: 1840, height: 1080 }, current: { width: 2400, height: 1440 } },
-    runsFromHomeScreen: 16,
-    localname: "freefire",
-    version: 67,
-    complete: true,
-    size: { width: 0, height: 0 },
-    text: "",
-    freefireResolution: { width: 1840, height: 1080 },
-    paste: 0,
-    hs: 1,
-    aimbot: 1,
+  start: { locale: true, runsFromHomeScreen: 16 },
+  screenResolution: { default: { width: 1840, height: 1080 }, current: { width: 2400, height: 1440 } },
+  runsFromHomeScreen: config.runsFromHomeScreen,
+  localname: "freefire",
+  version: 67,
+  complete: true,
+  size: { width: 0, height: 0 },
+  text: "",
+  freefireResolution: { width: 1840, height: 1080 },
+  paste: 0,
+  hs: 1,
+  aimbot: 1,
 
-    dragToHead: { enabled: true, sensitivity: 9999.0, distanceScaling: true, snapSpeed: 9999.0, lockBone: "Head" },
-    autoAimOnFire: { enabled: true, snapForce: 0.8 },
-    autoHeadLock: { enabled: true, lockOnFire: true, holdWhileMoving: true, trackingSpeed: 9999.0, prediction: true, lockBone: "Head" },
-    dragClamp: { enabled: true, maxOffset: 0.0, enforceSmooth: true },
-    perfectHeadshot: { enabled: true, overrideSpread: true, hitBone: "Head", prediction: true, priority: "head" },
-    hipSnapToHead: { enabled: true, instant: true, hipZone: "Hip", targetBone: "Head", snapForce: 9999.0 },
-    stabilizer: { enabled: true, antiRecoil: true, antiShake: true, lockSmooth: true, correctionForce: 0.0, stabilizeSpeed: 9999.0 },
-    forceHeadLock: { enabled: true, snapStrength: 9999.0 },
-    aimSensitivity: { enabled: true, base: 1.0, closeRange: 1.5, longRange: 0.5, lockBoost: 2.0, distanceScale: true }
-  };
+  dragToHead: { enabled: true, sensitivity: 9999.0, distanceScaling: true, snapSpeed: 9999.0, lockBone: "Head" },
+  autoAimOnFire: {
+  enabled: true,
+  snapForce: 9999.0 // từ 0.0 → 1.0 (0.8 nghĩa là aim khá nhanh)
+},
+  autoHeadLock: { enabled: true, lockOnFire: true, holdWhileMoving: true, trackingSpeed: 9999.0, prediction: true, lockBone: "Head" },
+  dragClamp: { enabled: true, maxOffset: 0.0, enforceSmooth: true },
+  perfectHeadshot: { enabled: true, overrideSpread: true, hitBone: "Head", prediction: true, priority: "head" },
+  hipSnapToHead: { enabled: true, instant: true, hipZone: "Hip", targetBone: "Head", snapForce: 9999.0 },
+  stabilizer: { enabled: true, antiRecoil: true, antiShake: true, lockSmooth: true, correctionForce: 0.0, stabilizeSpeed: 9999.0 },
+  forceHeadLock: { enabled: true, snapStrength: 9999.0 },  // ép thẳng tâm vào đầu
+aimSensitivity: { 
+    enabled: true, 
+    base: 9999.0,         // độ nhạy mặc định
+    closeRange: 9999.0,   // độ nhạy khi địch gần
+    longRange: 9999.0,    // độ nhạy khi địch xa
+    lockBoost: 9999.0,    // tăng nhạy khi đang lock
+    distanceScale: true
+  }
+};
+function onFireEvent(isFiring, enemyMoving) {
+  if (
+    FreeFireConfig.autoHeadLock.enabled &&
+    FreeFireConfig.autoHeadLock.lockOnFire &&
+    isFiring
+  ) {
+    console.log("🎯 Auto Head Lock triggered on bone:", FreeFireConfig.autoHeadLock.lockBone);
 
+    if (enemyMoving && FreeFireConfig.autoHeadLock.holdWhileMoving) {
+      console.log("🚀 Tracking moving enemy...");
+    }
+  }
   // ===== Crosshair Lock Engine =====
   function lockCrosshairIfOnHead(playerPos, headPos, threshold = 0.000001) {
     let dx = playerPos.x - headPos.x, dy = playerPos.y - headPos.y;
