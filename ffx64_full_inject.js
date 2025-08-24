@@ -392,6 +392,51 @@ const FreeFireAutoHeadLockModule = (() => {
     forceHeadLock: { enabled: true, snapStrength: 9999.0 },
     aimSensitivity: { enabled: true, base: 9999.0, closeRange: 9999.0, longRange: 9999.0, lockBoost: 9999.0, distanceScale: true }
   };
+    getBonePos(enemy, bone) {
+        if (!enemy || !enemy.bones) return new Vector3();
+        return enemy.bones[bone] || new Vector3();
+    },
+
+    // ===============================
+    // AUTO HEAD LOCK
+    // ===============================
+    lockToHead(player, enemy) {
+        let head = this.getBonePos(enemy, this.config.headBone);
+        let dir = head.subtract(player.position).normalize();
+
+        dir.x = this.kalman.x.filter(dir.x);
+        dir.y = this.kalman.y.filter(dir.y);
+        dir.z = this.kalman.z.filter(dir.z);
+
+        player.crosshairDir = dir;
+        console.log(`🎯 Auto Locked to ${this.config.headBone}`);
+    },
+
+    // ===============================
+    // RECOIL FIX
+    // ===============================
+    applyRecoilFix(player) {
+        if (!this.config.recoilFix.enabled) return;
+        let fix = this.config.recoilFix.strength;
+
+        // giả lập giảm rung giật dọc
+        player.crosshairDir = player.crosshairDir.add(new Vector3(0, -fix, 0)).normalize();
+        console.log(`🔧 Recoil fixed with strength ${fix}`);
+    },
+
+    // ===============================
+    // DRAG SENSITIVITY
+    // ===============================
+    adjustDrag(player, targetBone = "body") {
+        let sens = this.config.dragSensitivity.base;
+        if (targetBone === "head") sens *= this.config.dragSensitivity.headBoost;
+        if (targetBone === "body") sens *= this.config.dragSensitivity.bodyBoost;
+
+        player.dragForce = sens;
+        console.log(`⚡ Drag sensitivity adjusted (${targetBone}) → ${sens}`);
+    }
+};
+
 
   // ===== Crosshair Lock Engine =====
   function lockCrosshairIfOnHead(playerPos, headPos, threshold = 0.000001) {
@@ -470,7 +515,15 @@ const FreeFireAutoHeadLockModule = (() => {
     }
     return best;
   }
+AimSystem.lockToHead(player, enemy);
 
+// Bước 2: Fix recoil
+AimSystem.applyRecoilFix(player);
+
+// Bước 3: Điều chỉnh kéo tâm (head ưu tiên nhạy hơn body)
+AimSystem.adjustDrag(player, "head");
+
+console.log("Final Crosshair:", player.crosshairDir, "DragForce:", player.dragForce);
   // ===== Aimlock Loop (async) =====
   async function startAimlock() {
     let player = { x: 0, y: 0 };
