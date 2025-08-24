@@ -544,14 +544,7 @@ async function startAimlock() {
 
 // chạy
 FreeFireAutoHeadLockModule.startAimlock();
-  };
 
-})();
-
-// ===============================
-// DEMO TEST
-// ===============================
-FreeFireAutoHeadLockModule.startAimlock();
     const AIMBOT_SYSTEM = (() => {
     
     // ===============================
