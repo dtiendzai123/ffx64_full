@@ -535,16 +535,22 @@ async function startAimlock() {
 }
 
   // Xuất public API
-  return {
-     Vector3, KalmanFilter, AutoHeadLock, RaceConfig,
-    FreeFireConfig, AimSystem, runAimEngine, selectClosestEnemy, startAimlock
+    return {
+    Vector3: Vector3,
+    KalmanFilter: KalmanFilter,
+    AutoHeadLock: AutoHeadLock,
+    RaceConfig: RaceConfig,
+    FreeFireConfig: FreeFireConfig,
+    AimSystem: AimSystem,
+    runAimEngine: runAimEngine,
+    selectClosestEnemy: selectClosestEnemy,
+    startAimlock: startAimlock
   };
 
-})();
+})(); 
 
 // chạy
 FreeFireAutoHeadLockModule.startAimlock();
-
     const AIMBOT_SYSTEM = (() => {
     
     // ===============================
