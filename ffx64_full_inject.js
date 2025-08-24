@@ -516,21 +516,23 @@ aimSensitivity: {
       if (dist < bestDist) { bestDist = dist; best = e; }
     }
     return best;
+// ===== Aimlock Loop (async) =====
+async function startAimlock() {
+  let player = { x: 0, y: 0, position: new Vector3(0,0,0), crosshairDir: new Vector3(), dragForce: 9999.0 };
 
-  // ===== Aimlock Loop (async) =====
-  async function startAimlock() {
-let player = { x: 0, y: 0, position: new Vector3(0,0,0), crosshairDir: new Vector3(), dragForce: 9999.0 };
-    let enemies = [
-      { head: { head: { x: -0.0456970781, y: -0.004478302 }, hip: { x: -0.05334, y: -0.003515 } },
-      { head: { head: { x: -0.0456970781, y: -0.004478302 }, hip: { x: -0.05334, y: -0.003515 } }
-    ];
-    console.log("🚀 AIMLOCK running...");
-    while (true) {
-      let enemy = selectClosestEnemy(player, enemies);
-      if (enemy) player = runAimEngine(player, enemy);
-      await new Promise(r => setTimeout(r, 50));
-    }
+  // Sửa cấu trúc enemies: bỏ thừa "head: { head: {...}}"
+  let enemies = [
+    { head: { x: -0.0456970781, y: -0.004478302 }, hip: { x: -0.05334, y: -0.003515 } },
+    { head: { x: -0.0456970781, y: -0.004478302 }, hip: { x: -0.05334, y: -0.003515 } }
+  ];
+
+  console.log("🚀 AIMLOCK running...");
+  while (true) {
+    let enemy = selectClosestEnemy(player, enemies);
+    if (enemy) player = runAimEngine(player, enemy);
+    await new Promise(r => setTimeout(r, 50));
   }
+}
 
   // Xuất public API
   return {
