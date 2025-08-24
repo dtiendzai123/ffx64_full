@@ -310,6 +310,7 @@ const FreeFireAutoHeadLockModule = (() => {
       let mag = this.magnitude();
       return mag === 0 ? new Vector3(0,0,0) : new Vector3(this.x/mag, this.y/mag, this.z/mag);
     }
+    add(v) { return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z); }
   }
 
   // ===== Kalman Filter =====
@@ -337,7 +338,9 @@ const FreeFireAutoHeadLockModule = (() => {
     radius: 0.25,
     mass: 50.0
   };
-    const AimSystem = {
+
+  // ===== Aim System =====
+  const AimSystem = {
     getBonePos(enemy, bone) {
       if (!enemy || !enemy.bones) return new Vector3();
       return enemy.bones[bone] || new Vector3();
@@ -346,7 +349,6 @@ const FreeFireAutoHeadLockModule = (() => {
     lockToHead(player, enemy) {
       let head = this.getBonePos(enemy, RaceConfig.headBone);
       let dir = head.subtract(player.position).normalize();
-
       player.crosshairDir = dir;
       console.log(`🎯 Auto Locked to ${RaceConfig.headBone}`);
     },
@@ -390,7 +392,7 @@ const FreeFireAutoHeadLockModule = (() => {
     lockCrosshair(player, enemy) {
       if (!enemy) return;
       let targetBone = this.detectClosestBone(player, enemy);
-      if (targetBone !== RaceConfig.headBone && Math.random() < RaceConfig.sensitivity) {
+      if (targetBone !== RaceConfig.headBone && Math.random() < 0.5) {
         targetBone = RaceConfig.headBone;
       }
       let bonePos = this.getBone(enemy, targetBone);
@@ -404,41 +406,30 @@ const FreeFireAutoHeadLockModule = (() => {
   }
 
   // ===== Free Fire Config =====
- const FreeFireConfig = {
-  start: { locale: true, runsFromHomeScreen: 16 },
-  screenResolution: { default: { width: 1840, height: 1080 }, current: { width: 2400, height: 1440 } },
-  runsFromHomeScreen: config.runsFromHomeScreen,
-  localname: "freefire",
-  version: 67,
-  complete: true,
-  size: { width: 0, height: 0 },
-  text: "",
-  freefireResolution: { width: 1840, height: 1080 },
-  paste: 0,
-  hs: 1,
-  aimbot: 1,
+  const FreeFireConfig = {
+    start: { locale: true, runsFromHomeScreen: 16 },
+    screenResolution: { default: { width: 1840, height: 1080 }, current: { width: 2400, height: 1440 } },
+    runsFromHomeScreen: 16,
+    localname: "freefire",
+    version: 67,
+    complete: true,
+    size: { width: 0, height: 0 },
+    text: "",
+    freefireResolution: { width: 1840, height: 1080 },
+    paste: 0,
+    hs: 1,
+    aimbot: 1,
 
-  dragToHead: { enabled: true, sensitivity: 9999.0, distanceScaling: true, snapSpeed: 9999.0, lockBone: "Head" },
-  autoAimOnFire: {
-  enabled: true,
-  snapForce: 9999.0 // từ 0.0 → 1.0 (0.8 nghĩa là aim khá nhanh)
-},
-  autoHeadLock: { enabled: true, lockOnFire: true, holdWhileMoving: true, trackingSpeed: 9999.0, prediction: true, lockBone: "Head" },
-  dragClamp: { enabled: true, maxOffset: 0.0, enforceSmooth: true },
-  perfectHeadshot: { enabled: true, overrideSpread: true, hitBone: "Head", prediction: true, priority: "head" },
-  hipSnapToHead: { enabled: true, instant: true, hipZone: "Hip", targetBone: "Head", snapForce: 9999.0 },
-  stabilizer: { enabled: true, antiRecoil: true, antiShake: true, lockSmooth: true, correctionForce: 0.0, stabilizeSpeed: 9999.0 },
-  forceHeadLock: { enabled: true, snapStrength: 9999.0 },  // ép thẳng tâm vào đầu
-aimSensitivity: { 
-    enabled: true, 
-    base: 9999.0,         // độ nhạy mặc định
-    closeRange: 9999.0,   // độ nhạy khi địch gần
-    longRange: 9999.0,    // độ nhạy khi địch xa
-    lockBoost: 9999.0,    // tăng nhạy khi đang lock
-    distanceScale: true
-  }
-};
-
+    dragToHead: { enabled: true, sensitivity: 9999.0, distanceScaling: true, snapSpeed: 9999.0, lockBone: "Head" },
+    autoAimOnFire: { enabled: true, snapForce: 0.8 },
+    autoHeadLock: { enabled: true, lockOnFire: true, holdWhileMoving: true, trackingSpeed: 9999.0, prediction: true, lockBone: "Head" },
+    dragClamp: { enabled: true, maxOffset: 0.0, enforceSmooth: true },
+    perfectHeadshot: { enabled: true, overrideSpread: true, hitBone: "Head", prediction: true, priority: "head" },
+    hipSnapToHead: { enabled: true, instant: true, hipZone: "Hip", targetBone: "Head", snapForce: 9999.0 },
+    stabilizer: { enabled: true, antiRecoil: true, antiShake: true, lockSmooth: true, correctionForce: 0.0, stabilizeSpeed: 9999.0 },
+    forceHeadLock: { enabled: true, snapStrength: 9999.0 },
+    aimSensitivity: { enabled: true, base: 1.0, closeRange: 1.5, longRange: 0.5, lockBoost: 2.0, distanceScale: true }
+  };
 
   // ===== Crosshair Lock Engine =====
   function lockCrosshairIfOnHead(playerPos, headPos, threshold = 0.000001) {
@@ -464,8 +455,8 @@ aimSensitivity: {
     let distance = Math.sqrt(dx*dx + dy*dy);
     let sens = FreeFireConfig.aimSensitivity.base;
     if (FreeFireConfig.aimSensitivity.distanceScale) {
-      if (distance < 0.00001) sens = FreeFireConfig.aimSensitivity.closeRange;
-      else if (distance > 0.5) sens = FreeFireConfig.aimSensitivity.longRange;
+      if (distance < 0.1) sens = FreeFireConfig.aimSensitivity.closeRange;
+      else if (distance > 1.0) sens = FreeFireConfig.aimSensitivity.longRange;
     }
     sens *= FreeFireConfig.aimSensitivity.lockBoost;
     console.log("⚙ Sens:", sens.toFixed(2), "dist:", distance.toFixed(3));
@@ -516,35 +507,36 @@ aimSensitivity: {
       if (dist < bestDist) { bestDist = dist; best = e; }
     }
     return best;
-// ===== Aimlock Loop (async) =====
-async function startAimlock() {
-  let player = { x: 0, y: 0, position: new Vector3(0,0,0), crosshairDir: new Vector3(), dragForce: 9999.0 };
-
-  // Sửa cấu trúc enemies: bỏ thừa "head: { head: {...}}"
-  let enemies = [
-    { head: { x: -0.0456970781, y: -0.004478302 }, hip: { x: -0.05334, y: -0.003515 } },
-    { head: { x: -0.0456970781, y: -0.004478302 }, hip: { x: -0.05334, y: -0.003515 } }
-  ];
-
-  console.log("🚀 AIMLOCK running...");
-  while (true) {
-    let enemy = selectClosestEnemy(player, enemies);
-    if (enemy) player = runAimEngine(player, enemy);
-    await new Promise(r => setTimeout(r, 50));
   }
-}
+
+  // ===== Aimlock Loop (async) =====
+  async function startAimlock() {
+    let player = { x: 0, y: 0, position: new Vector3(0,0,0), crosshairDir: new Vector3(), dragForce: 9999.0 };
+
+    let enemies = [
+      { head: { x: -0.0456970781, y: -0.004478302 }, hip: { x: -0.05334, y: -0.003515 } },
+      { head: { x: -0.0456970781, y: -0.004478302 }, hip: { x: -0.05334, y: -0.003515 } }
+    ];
+
+    console.log("🚀 AIMLOCK running...");
+    while (true) {
+      let enemy = selectClosestEnemy(player, enemies);
+      if (enemy) player = runAimEngine(player, enemy);
+      await new Promise(r => setTimeout(r, 50));
+    }
+  }
 
   // Xuất public API
-    return {
-    Vector3: Vector3,
-    KalmanFilter: KalmanFilter,
-    AutoHeadLock: AutoHeadLock,
-    RaceConfig: RaceConfig,
-    FreeFireConfig: FreeFireConfig,
-    AimSystem: AimSystem,
-    runAimEngine: runAimEngine,
-    selectClosestEnemy: selectClosestEnemy,
-    startAimlock: startAimlock
+  return {
+    Vector3,
+    KalmanFilter,
+    AutoHeadLock,
+    RaceConfig,
+    FreeFireConfig,
+    AimSystem,
+    runAimEngine,
+    selectClosestEnemy,
+    startAimlock
   };
 
 })(); 
