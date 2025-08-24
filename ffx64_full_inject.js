@@ -440,7 +440,19 @@ aimSensitivity: {
     distanceScale: true
   }
 };
+function onFireEvent(isFiring, enemyMoving) {
+  if (
+    FreeFireConfig.autoHeadLock.enabled &&
+    FreeFireConfig.autoHeadLock.lockOnFire &&
+    isFiring
+  ) {
+    console.log("🎯 Auto Head Lock triggered on bone:", FreeFireConfig.autoHeadLock.lockBone);
 
+    if (enemyMoving && FreeFireConfig.autoHeadLock.holdWhileMoving) {
+      console.log("🚀 Tracking moving enemy...");
+    }
+  }
+} // <-- đóng ngoặc cho function
   // ===== Crosshair Lock Engine =====
   function lockCrosshairIfOnHead(playerPos, headPos, threshold = 0.000001) {
     let dx = playerPos.x - headPos.x, dy = playerPos.y - headPos.y;
@@ -549,9 +561,8 @@ aimSensitivity: {
     startAimlock
   };
 
-})(); 
+})();
 
-// chạy
 FreeFireAutoHeadLockModule.startAimlock();
     const AIMBOT_SYSTEM = (() => {
     
