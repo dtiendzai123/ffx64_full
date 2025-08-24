@@ -472,66 +472,96 @@ function onFireEvent(isFiring, enemyMoving) {
 
   // ===== Aim Sensitivity =====
   function getAimSensitivity(player, target) {
-    if (!FreeFireConfig.aimSensitivity.enabled) return FreeFireConfig.aimSensitivity.base;
-    let dx = target.x - player.x, dy = target.y - player.y;
-    let distance = Math.sqrt(dx*dx + dy*dy);
-    let sens = FreeFireConfig.aimSensitivity.base;
-    if (FreeFireConfig.aimSensitivity.distanceScale) {
-      if (distance < 0.1) sens = FreeFireConfig.aimSensitivity.closeRange;
-      else if (distance > 1.0) sens = FreeFireConfig.aimSensitivity.longRange;
+  if (!FreeFireConfig.aimSensitivity.enabled) return FreeFireConfig.aimSensitivity.base;
+
+  let dx = target.x - player.x;
+  let dy = target.y - player.y;
+  let distance = Math.sqrt(dx*dx + dy*dy);
+
+  let sens = FreeFireConfig.aimSensitivity.base;
+
+  // theo khoảng cách
+  if (FreeFireConfig.aimSensitivity.distanceScale) {
+    if (distance < 0.00001) {
+      sens = FreeFireConfig.aimSensitivity.closeRange;
+    } else if (distance > 0.5) {
+      sens = FreeFireConfig.aimSensitivity.longRange;
     }
-    sens *= FreeFireConfig.aimSensitivity.lockBoost;
-    console.log("⚙ Sens:", sens.toFixed(2), "dist:", distance.toFixed(3));
-    return sens;
   }
+
+  // nếu đang lock thì tăng nhạy
+  sens *= FreeFireConfig.aimSensitivity.lockBoost;
+
+  console.log("⚙ Aim Sensitivity:", sens.toFixed(2), "distance:", distance.toFixed(3));
+  return sens;
+}
+
 
   // ===== Aim Engine =====
-  function runAimEngine(playerPos, enemyBones, isFiring = true) {
-    let target = { ...enemyBones.head };
+  function runAimEngine(playerPos, enemyBones) {
+  let target = { ...enemyBones.head };
 
-    if (FreeFireConfig.hipSnapToHead.enabled) {
-      let aimAtHip = Math.abs(playerPos.x - enemyBones.hip.x) < 0.05 &&
-                     Math.abs(playerPos.y - enemyBones.hip.y) < 0.05;
-      if (aimAtHip && FreeFireConfig.hipSnapToHead.instant) {
-        target = { ...enemyBones.head };
-      }
+  // Auto Head Lock khi bắn
+  onFireEvent(true, true);
+playerPos = onFireEvent(true, true, playerPos, enemyBones);
+  // Hip snap
+  if (FreeFireConfig.hipSnapToHead.enabled) {
+    let aimAtHip = Math.abs(playerPos.x - enemyBones.hip.x) < 0.05 &&
+                   Math.abs(playerPos.y - enemyBones.hip.y) < 0.05;
+    if (aimAtHip && FreeFireConfig.hipSnapToHead.instant) {
+      target = { ...enemyBones.head };
     }
-
-    if (FreeFireConfig.autoAimOnFire.enabled && isFiring) {
-      playerPos.x += (enemyBones.head.x - playerPos.x) * FreeFireConfig.autoAimOnFire.snapForce;
-      playerPos.y += (enemyBones.head.y - playerPos.y) * FreeFireConfig.autoAimOnFire.snapForce;
-      console.log("🔫 Auto AIM HEAD:", playerPos);
-    }
-
-    if (FreeFireConfig.perfectHeadshot.enabled && FreeFireConfig.perfectHeadshot.prediction) {
-      target.x += 0.00001; target.y += 0.00001;
-    }
-
-    if (FreeFireConfig.stabilizer.enabled && FreeFireConfig.stabilizer.antiShake) {
-      target.x = parseFloat(target.x.toFixed(4));
-      target.y = parseFloat(target.y.toFixed(4));
-    }
-
-    target = clampCrosshairToHead(target, enemyBones.head);
-    let sens = getAimSensitivity(playerPos, target);
-    playerPos.x += (target.x - playerPos.x) * 0.2 * sens;
-    playerPos.y += (target.y - playerPos.y) * 0.2 * sens;
-    playerPos = lockCrosshairIfOnHead(playerPos, enemyBones.head);
-    return playerPos;
+ if (FreeFireConfig.autoAimOnFire.enabled && isFiring) {
+    let head = enemyBones.head;
+    playerPos.x += (head.x - playerPos.x) * FreeFireConfig.autoAimOnFire.snapForce;
+    playerPos.y += (head.y - playerPos.y) * FreeFireConfig.autoAimOnFire.snapForce;
+    console.log("🔫 Auto AIM HEAD triggered:", playerPos);
   }
 
-  // ===== Multi-Enemy Selector =====
-  function selectClosestEnemy(player, enemies) {
-    let best = null, bestDist = Infinity;
-    for (let e of enemies) {
-      let dx = e.head.x - player.x, dy = e.head.y - player.y;
-      let dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < bestDist) { bestDist = dist; best = e; }
-    }
-    return best;
+  return playerPos; // <-- return cuối cùng
+
+   }
+
+  // Perfect headshot
+  if (FreeFireConfig.perfectHeadshot.enabled && FreeFireConfig.perfectHeadshot.prediction) {
+    target.x += 0.00001;
+    target.y += 0.00001;
   }
 
-  // ===== Aimlock Loop (async) =====
+  // Stabilizer
+  if (FreeFireConfig.stabilizer.enabled && FreeFireConfig.stabilizer.antiShake) {
+    target.x = parseFloat(target.x.toFixed(4));
+    target.y = parseFloat(target.y.toFixed(4));
+  }
+
+  // Force head lock
+  target = clampCrosshairToHead(target, enemyBones.head);
+
+  // Apply sensitivity
+  let sens = getAimSensitivity(playerPos, target);
+  playerPos.x += (target.x - playerPos.x) * 0.2 * sens;
+  playerPos.y += (target.y - playerPos.y) * 0.2 * sens;
+
+  // ✅ Lock chặt tâm ngắm
+  playerPos = lockCrosshairIfOnHead(playerPos, enemyBones.head);
+
+  return playerPos; // trả về playerPos mới
+}
+function selectClosestEnemy(player, enemies) {
+  let best = null;
+  let bestDist = Infinity;
+  for (let e of enemies) {
+    let dx = e.head.x - player.x;
+    let dy = e.head.y - player.y;
+    let dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = e;
+    }
+  }
+  return best;
+} 
+    // ===== Aimlock Loop (async) =====
   async function startAimlock() {
     let player = { x: 0, y: 0, position: new Vector3(0,0,0), crosshairDir: new Vector3(), dragForce: 9999.0 };
 
