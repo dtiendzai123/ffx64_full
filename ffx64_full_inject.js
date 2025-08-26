@@ -360,9 +360,9 @@ const FreeFireAutoHeadLockModule = (() => {
     },
 
     adjustDrag(player, targetBone = "body") {
-      let sens = 1.0;
-      if (targetBone === "head") sens *= 2.0;
-      if (targetBone === "body") sens *= 1.3;
+      let sens = 9999.0;
+      if (targetBone === "head") sens *= 1.0;
+      if (targetBone === "body") sens *= 9999.3;
 
       player.dragForce = sens;
       console.log(`⚡ Drag sensitivity adjusted (${targetBone}) → ${sens}`);
@@ -644,7 +644,7 @@ FreeFireAutoHeadLockModule.startAimlock();
         // lấy boneOffset từ target (nếu có), fallback về 0
         const boneOffset = target.boneOffset 
             ? new Vector3(target.boneOffset.x, target.boneOffset.y, target.boneOffset.z) 
-            : new Vector3(0, 0.25, 0);
+            : new Vector3(0, 2.0, 0);
 
         return new Vector3(
             target.x + boneOffset.x,
@@ -665,7 +665,7 @@ FreeFireAutoHeadLockModule.startAimlock();
 
     const CONFIG = {
         enabled: true,
-        trackingSpeed: 10.0,
+        trackingSpeed: 9999.0,
         predictionFactor: 0.0,
         sensitivity: 9999.0,
         maxDistance: 9999.0,
@@ -705,11 +705,11 @@ const engine = new AIMBOT_SYSTEM.Engine();
 const frameData = {
     enemies: [
         { 
-            x: 0, y: 1.7, z: 0,
+            x: 0, y: 2.0, z: 0,
             boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 } // offset head
         },
         { 
-            x: 0, y: 1.7, z: 0,
+            x: 0, y: 2.0, z: 0,
             boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 } // offset head mặc định
         }
     ]
@@ -732,7 +732,7 @@ const AimLockSystem = {
     fov: 360,                    // Góc nhìn để aim
     autoFire: false,             // Tự động bắn khi lock trúng
     priority: "nearest",         // nearest | lowestHP | first
-    boneOffset: { x: 0, y: 0.05, z: 0 } // Dịch lên đầu (head clamp)
+    boneOffset: { x: 0, y: -0.0004, z: 0 } // Dịch lên đầu (head clamp)
   },
 
   // ==========================
@@ -846,7 +846,7 @@ const AimNeckConfig = {
 
   config: {
     sensitivity: 9999.0,         // Độ nhạy di chuyển tâm
-    lockSpeed: 0.95,             // Tốc độ hút tâm (1 = tức thì)
+    lockSpeed: 9999.0,             // Tốc độ hút tâm (1 = tức thì)
     prediction: true,            // Bật dự đoán vị trí cổ
     tracking: true,              // Theo dõi liên tục
     fov: 360,                    // Góc quét tìm mục tiêu
@@ -938,8 +938,8 @@ const AimNeckConfig = {
     headBone: "bone_Head",
 
     sensitivityBoost: 99999.0,   // drag siêu nhẹ (càng cao càng nhạy)
-    smoothFactor: 0.3,      // tốc độ hút về đầu (0.1 = chậm, 0.3 = nhanh)
-    snapThreshold: 0.002,     // khoảng cách auto hút hẳn vào đầu
+    smoothFactor: 0.0,      // tốc độ hút về đầu (0.1 = chậm, 0.3 = nhanh)
+    snapThreshold: 9999.0,     // khoảng cách auto hút hẳn vào đầu
 boneOffset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
         rotationOffset: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
         scale: { x: 1.0, y: 1.0, z: 1.0 },
